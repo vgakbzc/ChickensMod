@@ -76,8 +76,24 @@ public final class ChickensRegistry {
             result.add(parent2);
         }
         for (ChickensRegistryItem item : items.values()) {
-            if (item.isEnabled() && item.isChildOf(parent1, parent2)) {
+            if (item.isEnabled() && item.isChildOf(parent1, parent2) > 0) {
                 result.add(item);
+            }
+        }
+        return result;
+    }
+
+    private static List<Integer> getDiceValues(ChickensRegistryItem parent1, ChickensRegistryItem parent2) {
+        List<Integer> result = new ArrayList<>();
+        if (parent1.isEnabled()) {
+            result.add(parent1.DEFAULT_WEIGHT);
+        }
+        if (parent2.isEnabled()) {
+            result.add(parent2.DEFAULT_WEIGHT);
+        }
+        for (ChickensRegistryItem item : items.values()) {
+            if (item.isEnabled() && item.isChildOf(parent1, parent2) > 0) {
+                result.add(item.isChildOf(parent1, parent2));
             }
         }
         return result;
@@ -95,15 +111,16 @@ public final class ChickensRegistry {
 
     public static List<ChickensRegistryItem> getPossibleChickensToSpawn(SpawnType spawnType) {
         List<ChickensRegistryItem> result = new ArrayList<ChickensRegistryItem>();
-        for (ChickensRegistryItem chicken : items.values()) {
-            if (chicken.canSpawn() && chicken.getSpawnType() == spawnType && chicken.isEnabled()) {
-                result.add(chicken);
-            }
-        }
+//        for (ChickensRegistryItem chicken : items.values()) {
+//            if (chicken.canSpawn() && chicken.getSpawnType() == spawnType && chicken.isEnabled()) {
+//                result.add(chicken);
+//            }
+//        }
         return result;
     }
 
     public static SpawnType getSpawnType(Biome biome) {
+        //*
         if (biome == Biomes.HELL) {
             return SpawnType.HELL;
         }
@@ -113,52 +130,56 @@ public final class ChickensRegistry {
         }
 
         return SpawnType.NORMAL;
+
+         //*/
+
+        //return SpawnType.NONE;
     }
 
-    public static float getChildChance(ChickensRegistryItem child) {
-        if (child.getTier() <= 1) {
+    public static int getChildChance(ChickensRegistryItem.BreedHelper breed) {
+        if (breed.getWeight() <= 0) {
             return 0;
         }
 
         //noinspection ConstantConditions
-        List<ChickensRegistryItem> possibleChildren = getChildren(child.getParent1(), child.getParent2());
+        List<Integer> diceValues = getDiceValues(breed.getParent1(), breed.getParent2());
 
-        int maxChance = getMaxChance(possibleChildren);
-        int maxDiceValue = getMaxDiceValue(possibleChildren, maxChance);
+        int maxDiceValue = getMaxDiceValue(diceValues);
 
-        return ((maxChance - child.getTier()) * 100.0f) / maxDiceValue;
+        return Math.round((breed.getWeight() * 10000.0f) / maxDiceValue);
     }
 
     @Nullable
     public static ChickensRegistryItem getRandomChild(ChickensRegistryItem parent1, ChickensRegistryItem parent2) {
         List<ChickensRegistryItem> possibleChildren = getChildren(parent1, parent2);
+        List<Integer> diceValues = getDiceValues(parent1, parent2);
         if (possibleChildren.size() == 0) {
             return null;
         }
 
-        int maxChance = getMaxChance(possibleChildren);
-        int maxDiceValue = getMaxDiceValue(possibleChildren, maxChance);
+        int maxDiceValue = getMaxDiceValue(diceValues);
 
         int diceValue = rand.nextInt(maxDiceValue);
-        return getChickenToBeBorn(possibleChildren, maxChance, diceValue);
+        return getChickenToBeBorn(diceValues, possibleChildren, diceValue);
     }
 
     @Nullable
-    private static ChickensRegistryItem getChickenToBeBorn(List<ChickensRegistryItem> possibleChildren, int maxChance, int diceValue) {
-        int currentVale = 0;
-        for (ChickensRegistryItem child : possibleChildren) {
-            currentVale += maxChance - child.getTier();
-            if (diceValue < currentVale) {
-                return child;
+    private static ChickensRegistryItem getChickenToBeBorn(List<Integer> chances, List<ChickensRegistryItem> possibleChildren, int diceValue) {
+        int currentValue = 0;
+        int size = chances.size();
+        for (int i = 0; i < size; i++ ) {
+            currentValue += chances.get(i);
+            if (diceValue < currentValue) {
+                return possibleChildren.get(i);
             }
         }
         return null;
     }
 
-    private static int getMaxDiceValue(List<ChickensRegistryItem> possibleChildren, int maxChance) {
+    private static int getMaxDiceValue(List<Integer> chances) {
         int maxDiceValue = 0;
-        for (ChickensRegistryItem child : possibleChildren) {
-            maxDiceValue += maxChance - child.getTier();
+        for (Integer chance : chances) {
+            maxDiceValue += chance;
         }
         return maxDiceValue;
     }

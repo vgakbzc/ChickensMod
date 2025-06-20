@@ -122,25 +122,31 @@ public class ChickensJeiPlugin implements IModPlugin {
     private List<BreedingRecipeWrapper> getBreedingRecipes() {
         List<BreedingRecipeWrapper> result = new ArrayList<BreedingRecipeWrapper>();
         for (ChickensRegistryItem chicken : ChickensRegistry.getItems()) {
-            if (chicken.isBreedable()) {
+
+            if (!chicken.isBreedable()) { continue; }
+
+            ChickensRegistryItem.BreedHelper parents[] = chicken.getParents().toArray(new ChickensRegistryItem.BreedHelper[0]);
+
+            for(ChickensRegistryItem.BreedHelper breed : parents) {
 
                 ItemStack itemstack = new ItemStack(ChickensMod.spawnEgg, 1);
-                ItemSpawnEgg.applyEntityIdToItemStack(itemstack, chicken.getRegistryName()); 
-                
+                ItemSpawnEgg.applyEntityIdToItemStack(itemstack, chicken.getRegistryName());
+
                 ItemStack parent1 = new ItemStack(ChickensMod.spawnEgg, 1);
-                ItemSpawnEgg.applyEntityIdToItemStack(parent1, chicken.getParent1().getRegistryName()); 
-                
-                  
+                ItemSpawnEgg.applyEntityIdToItemStack(parent1, breed.getParent1().getRegistryName());
+
+
                 ItemStack parent2 = new ItemStack(ChickensMod.spawnEgg, 1);
-                ItemSpawnEgg.applyEntityIdToItemStack(parent2, chicken.getParent2().getRegistryName()); 
+                ItemSpawnEgg.applyEntityIdToItemStack(parent2, breed.getParent2().getRegistryName());
 
                 //noinspection ConstantConditions
                 result.add(new BreedingRecipeWrapper(
-                		parent1,
-                		parent2,
+                        parent1,
+                        parent2,
                         itemstack,
-                        ChickensRegistry.getChildChance(chicken)
+                        ChickensRegistry.getChildChance(breed)
                 ));
+
             }
         }
         return result;

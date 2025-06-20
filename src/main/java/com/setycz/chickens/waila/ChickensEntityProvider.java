@@ -1,3 +1,5 @@
+/*
+
 package com.setycz.chickens.waila;
 
 import java.util.List;
@@ -19,7 +21,7 @@ import net.minecraft.world.World;
 
 /**
  * Created by setyc on 20.02.2016.
- */
+ *//*
 @WailaPlugin
 public class ChickensEntityProvider implements IWailaEntityProvider, IWailaPlugin {
 
@@ -74,3 +76,5 @@ public class ChickensEntityProvider implements IWailaEntityProvider, IWailaPlugi
         return null;
     }
 }
+
+*/

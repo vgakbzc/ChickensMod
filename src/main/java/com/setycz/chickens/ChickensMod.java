@@ -123,11 +123,14 @@ public class ChickensMod {
 	public void preInit(FMLPreInitializationEvent event) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, guiHandler);
 
+
 		EntityRegistry.registerModEntity(new ResourceLocation(ChickensMod.MODID, CHICKEN), EntityChickensChicken.class,
 				CHICKEN, ConfigHandler.chickenEntityId, this, 64, 3, true);
 		
 		EntityRegistry.registerModEntity(new ResourceLocation(ChickensMod.MODID, "thown_egg"), EntityColoredEgg.class,
 				CHICKEN, 2, this, 64, 3, true);
+
+
 		
 
 		GameRegistry.registerTileEntity(TileEntityHenhouse.class, "henhouse");
@@ -243,9 +246,7 @@ public class ChickensMod {
 
 	private boolean requiresVisitingNether(ChickensRegistryItem chicken) {
 		// noinspection ConstantConditions
-		return chicken.getTier() == 1 ? chicken.getSpawnType() == SpawnType.HELL
-				: chicken.isBreedable() && (requiresVisitingNether(chicken.getParent1())
-						|| requiresVisitingNether(chicken.getParent2()));
+		return false;
 	}
 
 	private void dumpChickens(Collection<ChickensRegistryItem> items) {
@@ -264,20 +265,20 @@ public class ChickensMod {
 				}
 				file.write("\t]\n");
 			}
-			for (ChickensRegistryItem item : items) {
-				if (item.getParent1() != null) {
-					file.write("\tedge [\n");
-					file.write("\t\tsource " + item.getParent1().getRegistryName().toString() + "\n");
-					file.write("\t\ttarget " + item.getRegistryName().toString() + "\n");
-					file.write("\t]\n");
-				}
-				if (item.getParent2() != null) {
-					file.write("\tedge [\n");
-					file.write("\t\tsource " + item.getParent2().getRegistryName().toString() + "\n");
-					file.write("\t\ttarget " + item.getRegistryName().toString() + "\n");
-					file.write("\t]\n");
-				}
-			}
+//			for (ChickensRegistryItem item : items) {
+//				if (item.getParent1() != null) {
+//					file.write("\tedge [\n");
+//					file.write("\t\tsource " + item.getParent1().getRegistryName().toString() + "\n");
+//					file.write("\t\ttarget " + item.getRegistryName().toString() + "\n");
+//					file.write("\t]\n");
+//				}
+//				if (item.getParent2() != null) {
+//					file.write("\tedge [\n");
+//					file.write("\t\tsource " + item.getParent2().getRegistryName().toString() + "\n");
+//					file.write("\t\ttarget " + item.getRegistryName().toString() + "\n");
+//					file.write("\t]\n");
+//				}
+//			}
 			file.write("]\n");
 			file.close();
 		} catch (IOException ignored) {

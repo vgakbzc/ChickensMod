@@ -63,8 +63,9 @@ dependencies {
 
     deobfCompile "mezz.jei:jei_1.12.2:4.7.10.97"
     deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:${top_version}"
-    deobfCompile "mcp.mobius.waila:Hwyla:${HWYLA_version}_1.12"
+    // deobfCompile "mcp.mobius.waila:Hwyla:${HWYLA_version}_1.12"
     deobfCompile "cofh:RedstoneFlux:1.12-2.0.1.2:universal"
+    // implementation 'com.google.code.gson:gson:2.13.1'
 }
 
 processResources

@@ -20,12 +20,12 @@ public class BreedingRecipeWrapper extends BlankRecipeWrapper {
     private final ItemStack child;
     private final int chance;
 
-    public BreedingRecipeWrapper(ItemStack parent1, ItemStack parent2, ItemStack child, float chance) {
+    public BreedingRecipeWrapper(ItemStack parent1, ItemStack parent2, ItemStack child, int chance) {
         parents = new ArrayList<ItemStack>();
         parents.add(parent1);
         parents.add(parent2);
         this.child = child;
-        this.chance = Math.round(chance);
+        this.chance = chance;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class BreedingRecipeWrapper extends BlankRecipeWrapper {
     @Override
     @SideOnly(Side.CLIENT)
     public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-        String message = Translator.translateToLocalFormatted("gui.breeding.time", chance);
+        String message = Translator.translateToLocalFormatted("gui.breeding.chance", chance/100, chance/10%10, chance%10);
         minecraft.fontRenderer.drawString(message, 32, 25, Color.gray.getRGB());
     }
 }

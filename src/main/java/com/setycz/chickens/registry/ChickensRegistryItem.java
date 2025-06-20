@@ -10,6 +10,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.ArrayList;
+
 /**
  * Created by setyc on 12.02.2016.
  */
@@ -22,11 +24,36 @@ public class ChickensRegistryItem {
     private final int bgColor;
     private final int fgColor;
     private final ResourceLocation texture;
-    private ChickensRegistryItem parent1;
-    private ChickensRegistryItem parent2;
     private SpawnType spawnType;
     private boolean isEnabled = true;
     private float layCoefficient = 1.0f;
+    public final int DEFAULT_WEIGHT = 100;
+
+    private int tier = 0;
+
+    public class BreedHelper {
+        private final ChickensRegistryItem parent1;
+        private final ChickensRegistryItem parent2;
+        private final int weight;
+
+        public BreedHelper(ChickensRegistryItem parent1, ChickensRegistryItem parent2){
+            this(parent1, parent2, DEFAULT_WEIGHT);
+        }
+        public BreedHelper(ChickensRegistryItem parent1, ChickensRegistryItem parent2, int weight){
+            this.parent1 = parent1;
+            this.parent2 = parent2;
+            this.weight = weight;
+        }
+        public boolean isBreedable(ChickensRegistryItem parent1, ChickensRegistryItem parent2) {
+            return this.parent1 == parent1 && this.parent2 == parent2 || this.parent1 == parent2 && this.parent2 == parent1;
+        }
+        public int getWeight(){
+            return weight;
+        }
+        public ChickensRegistryItem getParent1() { return parent1; }
+        public ChickensRegistryItem getParent2() { return parent2; }
+    }
+    private ArrayList<BreedHelper> parents = new ArrayList<BreedHelper>();
 
     public ChickensRegistryItem(ResourceLocation registryName, String entityName, ResourceLocation texture, ItemStack layItem, int bgColor, int fgColor) {
         this(registryName, entityName, texture, layItem, bgColor, fgColor, null, null);
@@ -43,8 +70,7 @@ public class ChickensRegistryItem {
         this.fgColor = fgColor;
         this.texture = texture;
         this.spawnType = SpawnType.NORMAL;
-        this.parent1 = parent1;
-        this.parent2 = parent2;
+        this.addParents(parent1, parent2);
     }
 
 
@@ -55,7 +81,29 @@ public class ChickensRegistryItem {
     public ItemHolder getLayItemHolder() {
     	return this.layItem;
     }
-    
+
+    public ArrayList<BreedHelper> getParents() {
+        return parents;
+    }
+
+    public ChickensRegistryItem addParents(@Nullable ChickensRegistryItem parent1, @Nullable ChickensRegistryItem parent2, int weight){
+
+        if (parent1 == null || parent2 == null) {
+            return this;
+        }
+
+        BreedHelper breed = new BreedHelper(parent1, parent2, weight);
+        parents.add(breed);
+
+        return this;
+
+    }
+
+    public ChickensRegistryItem addParents(@Nullable ChickensRegistryItem parent1, @Nullable ChickensRegistryItem parent2) {
+        addParents(parent1, parent2, DEFAULT_WEIGHT);
+        return this;
+    }
+
     public ChickensRegistryItem setDropItem(ItemHolder itemHolder) {
         dropItem = itemHolder;
         return this;
@@ -80,16 +128,6 @@ public class ChickensRegistryItem {
         return entityName;
     }
 
-    @Nullable
-    public ChickensRegistryItem getParent1() {
-        return parent1;
-    }
-
-    @Nullable
-    public ChickensRegistryItem getParent2() {
-        return parent2;
-    }
-
     public int getBgColor() {
         return bgColor;
     }
@@ -105,6 +143,10 @@ public class ChickensRegistryItem {
     public ItemStack createLayItem() {
         return layItem.getStack();
     }
+
+    public int getTier(){
+        return parents.size() == 0 ? 1 : 2;
+    }
     
 
     public ItemStack createDropItem() {
@@ -114,15 +156,14 @@ public class ChickensRegistryItem {
         return createLayItem();
     }
 
-    public int getTier() {
-        if (parent1 == null || parent2 == null) {
-            return 1;
+    public int isChildOf(ChickensRegistryItem parent1, ChickensRegistryItem parent2) {
+        BreedHelper parentsArray[] = parents.toArray(new BreedHelper[0]);
+        for(BreedHelper breed : parentsArray) {
+            if(breed.isBreedable(parent1, parent2)) {
+                return breed.getWeight();
+            }
         }
-        return Math.max(parent1.getTier(), parent2.getTier()) + 1;
-    }
-
-    public boolean isChildOf(ChickensRegistryItem parent1, ChickensRegistryItem parent2) {
-        return this.parent1 == parent1 && this.parent2 == parent2 || this.parent1 == parent2 && this.parent2 == parent1;
+        return 0;
     }
 
     public boolean isDye() {
@@ -138,7 +179,8 @@ public class ChickensRegistryItem {
     }
 
     public boolean canSpawn() {
-        return getTier() == 1 && spawnType != SpawnType.NONE;
+        // return getTier() == 1 && spawnType != SpawnType.NONE;
+        return false;
     }
 
 //    public int getId() {
@@ -170,39 +212,39 @@ public class ChickensRegistryItem {
     }
 
     public boolean isEnabled() {
-        return !(!isEnabled
-                || parent1 != null && !parent1.isEnabled()
-                || parent2 != null && !parent2.isEnabled());
+        return isEnabled;
     }
 
-    public void setLayItem(ItemHolder itemHolder) {
+    public ChickensRegistryItem setLayItem(ItemHolder itemHolder) {
         layItem = itemHolder;
+        return this;
     }
 
     @Deprecated
-    public void setLayItem(ItemStack itemstack) {
+    public ChickensRegistryItem setLayItem(ItemStack itemstack) {
     	setLayItem(new ItemHolder(itemstack, false));
+    	return this;
     }
     
-    public void setNoParents() {
-        parent1 = null;
-        parent2 = null;
+    public ChickensRegistryItem setNoParents() {
+        parents = new ArrayList<BreedHelper>();
+        return this;
     }
 
     public ChickensRegistryItem setParentsNew(ChickensRegistryItem parent1, ChickensRegistryItem parent2) {
-        this.parent1 = parent1;
-        this.parent2 = parent2;
+        this.setNoParents();
+        this.addParents(parent1, parent2);
         return this;
     }
 
     @Deprecated
     public void setParents(ChickensRegistryItem parent1, ChickensRegistryItem parent2) {
-        this.parent1 = parent1;
-        this.parent2 = parent2;
+        this.setNoParents();
+        this.addParents(parent1, parent2);
     }
 
     public boolean isBreedable() {
-        return parent1 != null && parent2 != null;
+        return parents.size() > 0;
     }
     
     

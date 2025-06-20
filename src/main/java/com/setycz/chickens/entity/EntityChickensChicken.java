@@ -216,10 +216,14 @@ public class EntityChickensChicken extends EntityChicken {
 
     @Override
     public boolean getCanSpawnHere() {
+        /*
         boolean anyInNether = ChickensRegistry.isAnyIn(SpawnType.HELL);
         boolean anyInOverworld = ChickensRegistry.isAnyIn(SpawnType.NORMAL) || ChickensRegistry.isAnyIn(SpawnType.SNOW);
         Biome biome = world.getBiomeForCoordsBody(getPosition());
         return anyInNether && biome == Biomes.HELL || anyInOverworld && super.getCanSpawnHere();
+
+         */
+        return false;
     }
 
     @Override

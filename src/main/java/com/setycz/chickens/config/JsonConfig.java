@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
 import com.setycz.chickens.ChickensMod;
 import com.setycz.chickens.handler.ItemHolder;
 
@@ -198,6 +199,45 @@ public class JsonConfig {
 		}
 		
 		return stack;
+	}
+
+	/**
+	 * Get or Set an Integer
+	 *
+	 * @param categoryProperty
+	 * @param property
+	 * @param value
+	 * @return
+	 */
+	public int getInteger(String categoryProperty, String property, int value)
+	{
+		JsonObject object = getCategory(categoryProperty);
+
+		if(object.has(property)){
+			value = object.get(property).getAsInt();
+		} else {
+			object.addProperty(property, value);
+			setHasChanged(true);
+		}
+
+		return value;
+	}
+
+	/*
+	    Get or set an array
+	 */
+	public JsonArray getArray(String categoryProperty, String property, JsonArray value)
+	{
+		JsonObject object = getCategory(categoryProperty);
+
+		if(object.has(property)) {
+			value = object.getAsJsonArray(property);
+		} else {
+			object.add(property, value);
+			setHasChanged(true);
+		}
+
+		return value;
 	}
 	
 	

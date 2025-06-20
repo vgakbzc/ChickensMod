@@ -6,6 +6,9 @@ import java.util.Collection;
 import java.util.List;
 
 import com.google.gson.JsonObject;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.setycz.chickens.handler.ItemHolder;
 import com.setycz.chickens.handler.SpawnType;
 import com.setycz.chickens.registry.ChickensRegistry;
@@ -70,16 +73,25 @@ public class ConfigHandler {
 		config.Load();
 		
 		// Add Comments
-			String comment = "_comment";
-			config.getString(comment, "name", "Just a Reference to the old system naming. Changing does nothing.");
-			config.getString(comment, "is_enabled", "Is chicken enabled?");
-			config.getString(comment, "lay_item", "Item the chicken will Lay. Changing the qty will double that amount on each gain bonus. ");
-			config.getFullJson().get(comment).getAsJsonObject().add("lay_item_example", new ItemHolder(new ItemStack(Items.GOLD_INGOT), true).writeJsonObject(new JsonObject()));
-			config.getString(comment, "drop_item", "Item the chicken will Lay. Changing the qty will double that amount on each gain bonus. ");
-			config.getFullJson().get(comment).getAsJsonObject().add("drop_item_example", new ItemHolder(new ItemStack(Items.BONE, 2).setStackDisplayName("Bone of my Enemy"), true).writeJsonObject(new JsonObject()));
-			config.getString(comment, "spawn_type", "Chicken spawn type, can be: " + String.join(",", SpawnType.names()));
-			config.getString(comment, "parent_1", "First parent, empty if it cant be breed. modid:chickenid #example: chickens:waterchicken");
-			config.getString(comment, "parent_2", "Second parent, empty if it cant be breed. ");
+		String comment = "_comment";
+		config.getString(comment, "name", "Just a Reference to the old system naming. Changing does nothing.");
+		config.getString(comment, "is_enabled", "Is chicken enabled?");
+		config.getString(comment, "lay_item", "Item the chicken will Lay. Changing the qty will double that amount on each gain bonus. ");
+		config.getFullJson().get(comment).getAsJsonObject().add("lay_item_example", new ItemHolder(new ItemStack(Items.GOLD_INGOT), true).writeJsonObject(new JsonObject()));
+		config.getString(comment, "drop_item", "Item the chicken will Lay. Changing the qty will double that amount on each gain bonus. ");
+		config.getFullJson().get(comment).getAsJsonObject().add("drop_item_example", new ItemHolder(new ItemStack(Items.BONE, 2).setStackDisplayName("Bone of my Enemy"), true).writeJsonObject(new JsonObject()));
+		config.getString(comment, "spawn_type", "Chicken spawn type, can be: " + String.join(",", SpawnType.names()));
+
+		JsonObject breedExample = new JsonObject();
+		breedExample.addProperty("parent1", "First parent, empty if it cant be breed. modid:chickenid #example: chickens:waterchicken");
+		breedExample.addProperty("parent2", "Second parent, empty if it cant be breed. ");
+		breedExample.addProperty("weight", 100);
+		JsonArray breedArrayExample = new JsonArray();
+		breedArrayExample.add(breedExample);
+		config.getArray(comment, "breed", breedArrayExample);
+//			config.getString(comment, "parent_1", "First parent, empty if it cant be breed. modid:chickenid #example: chickens:waterchicken");
+//			config.getString(comment, "parent_2", "Second parent, empty if it cant be breed. ");
+//			config.getInteger(comment, "weight", 100);
 		
         for (ChickensRegistryItem chicken : allChickens) {
         	
@@ -105,15 +117,36 @@ public class ConfigHandler {
         
         // Set Parents after Chickens have been registered
         for (ChickensRegistryItem chicken : allChickens) {
-        	
-        	ChickensRegistryItem parent1 = ChickensRegistry.getByRegistryName(getChickenParent(config, "parent_1", allChickens, chicken, chicken.getParent1()));
-        	ChickensRegistryItem parent2 = ChickensRegistry.getByRegistryName(getChickenParent(config, "parent_2", allChickens, chicken, chicken.getParent2()));
-            
-        	if (parent1 != null && parent2 != null) {
-        		chicken.setParentsNew(parent1, parent2);
-        	} else {
-        		chicken.setNoParents();
-        	}
+
+        	chicken.setNoParents();
+
+        	JsonArray breeders = config.getArray(chicken.getRegistryName().toString(), "breed", new JsonArray());
+        	int size = breeders.size();
+
+        	for(int i = 0; i < size; i++) {
+        		JsonObject breeder = breeders.get(i).getAsJsonObject();
+        		ChickensRegistryItem parent1 = ChickensRegistry.getByRegistryName(breeder.get("parent1").getAsString());
+				ChickensRegistryItem parent2 = ChickensRegistry.getByRegistryName(breeder.get("parent2").getAsString());
+				int weight = -1;
+				if(breeder.has("weight")) {
+					weight = breeder.get("weight").getAsInt();
+				}
+
+				if(weight == -1) { weight = chicken.DEFAULT_WEIGHT; }
+
+				if(weight > 0 && parent1 != null && parent2 != null) {
+					chicken.addParents(parent1, parent2, weight);
+				}
+			}
+
+//        	ChickensRegistryItem parent1 = ChickensRegistry.getByRegistryName(getChickenParent(config, "parent_1", allChickens, chicken, chicken.getParent1()));
+//        	ChickensRegistryItem parent2 = ChickensRegistry.getByRegistryName(getChickenParent(config, "parent_2", allChickens, chicken, chicken.getParent2()));
+//
+//        	if (parent1 != null && parent2 != null) {
+//        		chicken.setParentsNew(parent1, parent2);
+//        	} else {
+//        		chicken.setNoParents();
+//        	}
         }
 		
         if(config.hasChanged) {
