@@ -18,6 +18,8 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.config.Configuration;
 
+import gregtech.api.unification.OreDictUnifier;
+
 public class ConfigHandler {
 	public static final File configDir = new File("config/chickens");
 	public static final File ChickensMainFile = new File(configDir, "main_chickens.cfg");
@@ -118,9 +120,15 @@ public class ConfigHandler {
         // Set Parents after Chickens have been registered
         for (ChickensRegistryItem chicken : allChickens) {
 
-        	chicken.setNoParents();
+        	// chicken.setNoParents();
 
-        	JsonArray breeders = config.getArray(chicken.getRegistryName().toString(), "breed", new JsonArray());
+			JsonArray defaultBreeders = new JsonArray();
+			List<ChickensRegistryItem.BreedHelper> defaultBreedersArray = chicken.getParents();
+			for(ChickensRegistryItem.BreedHelper breed : defaultBreedersArray) {
+				defaultBreeders.add(breed.toJsonObject());
+			}
+
+        	JsonArray breeders = config.getArray(chicken.getRegistryName().toString(), "breed", defaultBreeders);
         	int size = breeders.size();
 
         	for(int i = 0; i < size; i++) {

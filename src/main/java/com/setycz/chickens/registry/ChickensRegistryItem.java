@@ -2,6 +2,7 @@ package com.setycz.chickens.registry;
 
 import javax.annotation.Nullable;
 
+import com.setycz.chickens.ChickensMod;
 import com.setycz.chickens.handler.ItemHolder;
 import com.setycz.chickens.handler.SpawnType;
 
@@ -9,6 +10,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 
@@ -21,9 +23,9 @@ public class ChickensRegistryItem {
     private final String entityName;
     private ItemHolder layItem;
     private ItemHolder dropItem;
-    private final int bgColor;
-    private final int fgColor;
-    private final ResourceLocation texture;
+    private  int bgColor;
+    private  int fgColor;
+    private  ResourceLocation texture;
     private SpawnType spawnType;
     private boolean isEnabled = true;
     private float layCoefficient = 1.0f;
@@ -52,16 +54,47 @@ public class ChickensRegistryItem {
         }
         public ChickensRegistryItem getParent1() { return parent1; }
         public ChickensRegistryItem getParent2() { return parent2; }
+        public JsonObject toJsonObject(){
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("parent1", parent1.getEntityName());
+            jsonObject.addProperty("parent2", parent2.getEntityName());
+            jsonObject.addProperty("weight", weight);
+            return jsonObject;
+        }
     }
     private ArrayList<BreedHelper> parents = new ArrayList<BreedHelper>();
 
+    @Deprecated
     public ChickensRegistryItem(ResourceLocation registryName, String entityName, ResourceLocation texture, ItemStack layItem, int bgColor, int fgColor) {
         this(registryName, entityName, texture, layItem, bgColor, fgColor, null, null);
     }
+    @Deprecated
     public ChickensRegistryItem(ResourceLocation registryName, String entityName, ResourceLocation texture, ItemStack layItem, int bgColor, int fgColor, @Nullable ChickensRegistryItem parent1, @Nullable ChickensRegistryItem parent2)   {
     	this(registryName, entityName, texture, new ItemHolder(layItem, false), bgColor, fgColor, parent1, parent2);
     }
-    
+    public ChickensRegistryItem(String entityName) {
+        this.registryName = new ResourceLocation(ChickensMod.MODID, entityName);
+        this.entityName = entityName;
+        layItem = null;
+        dropItem = null;
+        this.bgColor = 0xffffff;
+        this.fgColor = 0x000000;
+        // this.texture = new ResourceLocation("chickens", "textures/entity/flint_chicken.png");
+        this.spawnType = SpawnType.NONE;
+        this.setNoParents();
+
+        String texturePath = "textures/entity/";
+        for(int i = 0; i < entityName.length(); i++ ) {
+            if( i != 0 && entityName.charAt(i) >= 'A' && entityName.charAt(i) <= 'Z') {
+                texturePath += "_" + (char)((int)entityName.charAt(i) + (int)'a' - (int)'A');
+            } else {
+                texturePath += entityName.charAt(i);
+            }
+        }
+        this.texture = new ResourceLocation("chickens", texturePath);
+    }
+
+    @Deprecated
     public ChickensRegistryItem(ResourceLocation registryName, String entityName, ResourceLocation texture, ItemHolder layItem, int bgColor, int fgColor, @Nullable ChickensRegistryItem parent1, @Nullable ChickensRegistryItem parent2) {
         this.registryName = registryName;
         this.entityName = entityName;
@@ -217,6 +250,9 @@ public class ChickensRegistryItem {
 
     public ChickensRegistryItem setLayItem(ItemHolder itemHolder) {
         layItem = itemHolder;
+        if(dropItem == null) {
+            dropItem = itemHolder;
+        }
         return this;
     }
 
@@ -251,5 +287,15 @@ public class ChickensRegistryItem {
     public static void registerChickens()
     {
     Item.getByNameOrId("");	
+    }
+
+    public void setTextureResourceLocation(ResourceLocation res) {
+        this.texture = res;
+    }
+    public void setFgColor(int color) {
+        this.fgColor = color;
+    }
+    public void setBgColor(int color) {
+        this.bgColor = color;
     }
 }
