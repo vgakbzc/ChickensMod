@@ -12,6 +12,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import com.google.gson.JsonObject;
 
+import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.material.Material;
+
 import java.util.ArrayList;
 
 /**
@@ -64,6 +69,17 @@ public class ChickensRegistryItem {
     }
     private ArrayList<BreedHelper> parents = new ArrayList<BreedHelper>();
 
+    public class GTItemHolder {
+        private OrePrefix orePrefix;
+        private Material material;
+        public GTItemHolder(OrePrefix orePrefix, Material material) {
+            this.orePrefix = orePrefix;
+            this.material = material;
+        }
+        public ItemStack getItem(){ return OreDictUnifier.get(orePrefix, material); }
+    }
+    private GTItemHolder gtItemHolder = null;
+
     @Deprecated
     public ChickensRegistryItem(ResourceLocation registryName, String entityName, ResourceLocation texture, ItemStack layItem, int bgColor, int fgColor) {
         this(registryName, entityName, texture, layItem, bgColor, fgColor, null, null);
@@ -114,6 +130,16 @@ public class ChickensRegistryItem {
     
     public ItemHolder getLayItemHolder() {
     	return this.layItem;
+    }
+
+    public void registerGTItemHolder() {
+        if(gtItemHolder != null) {
+            this.setLayItem(gtItemHolder.getItem());
+        }
+    }
+
+    public void setGtItemHolder(OrePrefix prefix, Material material) {
+        gtItemHolder = new GTItemHolder(prefix, material);
     }
 
     public ArrayList<BreedHelper> getParents() {

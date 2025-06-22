@@ -8,6 +8,11 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.material.Material;
+
 public class ChickensRegistryItemBuilder{
 
     private ChickensRegistryItem chicken;
@@ -47,6 +52,10 @@ public class ChickensRegistryItemBuilder{
     }
     public ChickensRegistryItemBuilder setLayItem(ItemStack item) {
         chicken.setLayItem(item);
+        return this;
+    }
+    public ChickensRegistryItemBuilder setLayItemGTHolder(OrePrefix prefix, Material material) {
+        chicken.setGtItemHolder(prefix, material);
         return this;
     }
 

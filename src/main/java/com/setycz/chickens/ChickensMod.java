@@ -60,6 +60,7 @@ import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -135,24 +136,28 @@ public class ChickensMod {
 		EntityRegistry.registerModEntity(new ResourceLocation(ChickensMod.MODID, "thown_egg"), EntityColoredEgg.class,
 				CHICKEN, 2, this, 64, 3, true);
 
-
-		
-
-		GameRegistry.registerTileEntity(TileEntityHenhouse.class, "henhouse");
-		
 		proxy.preInit();
-		
+
 		registerLiquidEggs();
 
-		ConfigHandler.LoadConfigs(generateDefaultChickens());
+		List<ChickensRegistryItem> allChickens = generateDefaultChickens();
+		for(ChickensRegistryItem chicken : allChickens) {
+			ChickensRegistry.register(chicken);
+		}
 
 		log.info(String.format("Enabled chickens: %s", getChickenNames(ChickensRegistry.getItems())));
 		log.info(String.format("Disabled chickens: %s", getChickenNames(ChickensRegistry.getDisabledItems())));
 		for (SpawnType spawnType : SpawnType.values()) {
 			log.info(String.format("[%s] biome type will spawn %s", spawnType,
-					getChickenNames(ChickensRegistry.getPossibleChickensToSpawn(spawnType))));
+				getChickenNames(ChickensRegistry.getPossibleChickensToSpawn(spawnType))));
 		}
 
+		GameRegistry.registerTileEntity(TileEntityHenhouse.class, "henhouse");
+
+	}
+
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void registerChickens(RegistryEvent.Register<Item> event) {
 	}
 
 	@EventHandler
@@ -316,6 +321,10 @@ public class ChickensMod {
 	public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
 		
 		// register all chickens to Minecraft
+		for(ChickensRegistryItem chicken : ChickensRegistry.getItems()) {
+			chicken.registerGTItemHolder();
+		}
+
 		for (ChickensRegistryItem chicken : ChickensRegistry.getItems()) {
 			ChickensMod.registerChicken(chicken, event.getRegistry());
 		}
@@ -598,7 +607,7 @@ public class ChickensMod {
 
 			ChickensRegistryItem pyriteChicken = new ChickensRegistryItemBuilder("PyriteChicken")
 				.addParents(stoneChicken, sandChicken, 20)
-				.setLayItem(OreDictUnifier.get(OrePrefix.dust, Materials.Zinc))
+				.setLayItemGTHolder(OrePrefix.ore, Materials.Pyrite)
 				.setColor(0xcfcfcf, 0x6e3e09)
 				.build();
 			chickens.add(pyriteChicken);
