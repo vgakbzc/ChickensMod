@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import javax.annotation.Nullable;
 
 import com.setycz.chickens.ChickensMod;
 import com.setycz.chickens.handler.SpawnType;
 
+import com.sun.istack.internal.Nullable;
 import net.minecraft.init.Biomes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
@@ -55,6 +55,16 @@ public final class ChickensRegistry {
     public static ChickensRegistryItem getByRegistryName(String type)
     {
     	return STRING_TO_ITEM.get(type);
+    }
+
+    @Nullable
+    public static ChickensRegistryItem getByEntityName(String name, List<ChickensRegistryItem> chickens) {
+        for(ChickensRegistryItem chicken : chickens) {
+            if(chicken.getEntityName() == name) {
+                return chicken;
+            }
+        }
+        return null;
     }
 
     public static Collection<ChickensRegistryItem> getItems() {

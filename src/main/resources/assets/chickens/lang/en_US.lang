@@ -72,6 +72,8 @@ entity.xpChicken.name=Xp Chicken
 entity.pCrystalChicken.name=Prismarine Crystal Chicken
 entity.obsidianChicken.name=Obsidian Chicken
 entity.soulSandChicken.name=Soul Sand Chicken
+entity.StoneChicken.name=Stone Chicken
+entity.PyriteChicken.name=Pyrite Chicken
 
 entity.ChickensChicken.tier=Tier: %1$s
 entity.ChickensChicken.layProgress=Next egg in ~%1$smin.

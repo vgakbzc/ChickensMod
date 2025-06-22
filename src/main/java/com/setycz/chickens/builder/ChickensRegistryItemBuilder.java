@@ -26,7 +26,7 @@ public class ChickensRegistryItemBuilder{
     }
 
     public ChickensRegistryItemBuilder setTextureLocation(String texture) {
-        chicken.setTextureResourceLocation(new ResourceLocation("/texture/entity" + texture));
+        chicken.setTextureResourceLocation(new ResourceLocation("textures/entity/" + texture));
         return this;
     }
 

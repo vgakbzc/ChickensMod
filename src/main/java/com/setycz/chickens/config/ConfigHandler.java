@@ -127,6 +127,7 @@ public class ConfigHandler {
 			for(ChickensRegistryItem.BreedHelper breed : defaultBreedersArray) {
 				defaultBreeders.add(breed.toJsonObject());
 			}
+			chicken.setNoParents();
 
         	JsonArray breeders = config.getArray(chicken.getRegistryName().toString(), "breed", defaultBreeders);
         	int size = breeders.size();

@@ -56,8 +56,8 @@ public class ChickensRegistryItem {
         public ChickensRegistryItem getParent2() { return parent2; }
         public JsonObject toJsonObject(){
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("parent1", parent1.getEntityName());
-            jsonObject.addProperty("parent2", parent2.getEntityName());
+            jsonObject.addProperty("parent1", parent1.getRegistryName().toString());
+            jsonObject.addProperty("parent2", parent2.getRegistryName().toString());
             jsonObject.addProperty("weight", weight);
             return jsonObject;
         }
@@ -91,6 +91,7 @@ public class ChickensRegistryItem {
                 texturePath += entityName.charAt(i);
             }
         }
+        texturePath += ".png";
         this.texture = new ResourceLocation("chickens", texturePath);
     }
 

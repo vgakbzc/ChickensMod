@@ -72,6 +72,8 @@ entity.xpChicken.name=经验鸡
 entity.pCrystalChicken.name=海晶砂粒鸡
 entity.obsidianChicken.name=黑曜石鸡
 entity.soulSandChicken.name=灵魂沙鸡
+entity.StoneChicken.name=石鸡
+entity.PyriteChicken.name=黄铁矿鸡
 
 entity.ChickensChicken.tier=等级：%1$s
 entity.ChickensChicken.layProgress=距离产出下个鸡蛋%1$smin。

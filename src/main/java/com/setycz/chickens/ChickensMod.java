@@ -69,11 +69,14 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import net.minecraftforge.registries.IForgeRegistry;
+import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.ore.OrePrefix;
 
 /**
  * Created by setyc on 12.02.2016.
  */
-@Mod(modid = ChickensMod.MODID, name = ChickensMod.NAME, version = ChickensMod.VERSION, acceptedMinecraftVersions = "[1.12, 1.12.2]", dependencies = "required-after:forge@[14.21.1.2387,);")
+@Mod(modid = ChickensMod.MODID, name = ChickensMod.NAME, version = ChickensMod.VERSION, acceptedMinecraftVersions = "[1.12, 1.12.2]", dependencies = "required-after:forge@[14.21.1.2387,);after:gregtech@[2.8.0,);after:gtfo@[0.0.0,);after:gtlitecore@[0.0.0,)")
 @EventBusSubscriber
 public class ChickensMod {
 	public static final String MODID = "chickens";
@@ -584,8 +587,22 @@ public class ChickensMod {
 				new ItemStack(Blocks.SOUL_SAND, 1, 0), 0x453125, 0xd52f08, sandChicken, netherwartChicken);
 		chickens.add(soulSandChicken);
 
+		ChickensRegistryItem stoneChicken = new ChickensRegistryItemBuilder("StoneChicken")
+			.addParents(clayChicken, sandChicken, 50)
+			.setLayItem(new ItemStack(Blocks.STONE))
+			.setColor(0xcfcfcf, 0x3c3c3c)
+			.build();
+		chickens.add(stoneChicken);
+
 		if (Loader.isModLoaded("gregtech")) { // load gregtech version ore chickens
-			;
+
+			ChickensRegistryItem pyriteChicken = new ChickensRegistryItemBuilder("PyriteChicken")
+				.addParents(stoneChicken, sandChicken, 20)
+				.setLayItem(OreDictUnifier.get(OrePrefix.dust, Materials.Zinc))
+				.setColor(0xcfcfcf, 0x6e3e09)
+				.build();
+			chickens.add(pyriteChicken);
+
 		} else { // load default ore chickens
 
 
