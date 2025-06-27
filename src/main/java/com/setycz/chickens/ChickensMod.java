@@ -23,6 +23,7 @@ import com.setycz.chickens.item.ItemAnalyzer;
 import com.setycz.chickens.item.ItemColoredEgg;
 import com.setycz.chickens.item.ItemLiquidEgg;
 import com.setycz.chickens.item.ItemSpawnEgg;
+import com.setycz.chickens.metatileentities.multi.ChickensMetaTileEntities;
 import com.setycz.chickens.registry.ChickensRegistry;
 import com.setycz.chickens.registry.ChickensRegistryItem;
 import com.setycz.chickens.registry.LiquidEggRegistry;
@@ -153,6 +154,10 @@ public class ChickensMod {
 		}
 
 		GameRegistry.registerTileEntity(TileEntityHenhouse.class, "henhouse");
+
+		if(Loader.isModLoaded("gregtech")) {
+			ChickensMetaTileEntities.register();
+		}
 
 	}
 

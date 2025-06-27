@@ -6,6 +6,9 @@ buildscript {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
+        flatDir {
+            dirs("libs")
+        }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
@@ -46,6 +49,7 @@ minecraft {
 
 repositories {
     mavenCentral()
+    mavenLocal()
 //    maven { url "http://tehnut.info/maven" }
     maven { url = "http://chickenbones.net/maven/" }
     maven { url "http://dvs1.progwml6.com/files/maven" }
@@ -67,6 +71,7 @@ dependencies {
     deobfCompile "cofh:RedstoneFlux:1.12-2.0.1.2:universal"
     deobfCompile "curse.maven:gregtech-ce-unofficial-1:1"
     // implementation 'com.google.code.gson:gson:2.13.1'
+//    deobfCompile fileTree(dir: 'libs', include: ['*.jar'])
 }
 
 processResources
