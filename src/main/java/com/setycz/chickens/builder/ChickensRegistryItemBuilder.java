@@ -1,5 +1,6 @@
 package com.setycz.chickens.builder;
 
+import com.setycz.chickens.registry.ChickensRegistry;
 import com.setycz.chickens.registry.ChickensRegistryItem;
 
 import net.minecraft.block.Block;
@@ -56,6 +57,10 @@ public class ChickensRegistryItemBuilder{
     }
     public ChickensRegistryItemBuilder setLayItemGTHolder(OrePrefix prefix, Material material) {
         chicken.setGtItemHolder(prefix, material);
+        return this;
+    }
+    public ChickensRegistryItemBuilder setRarity(float rarity) {
+        chicken.setRarity(rarity);
         return this;
     }
 

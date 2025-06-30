@@ -22,6 +22,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 /**
  * Created by setyc on 12.02.2016.
@@ -133,6 +134,15 @@ public class ItemSpawnEgg extends Item implements IColorSource {
     	}
     	
     	return null;
+    }
+
+    @Nullable
+    public static ItemStack getSpawnEggById(String id) {
+        NBTTagCompound nbtTagCompound = new NBTTagCompound();
+        NBTTagCompound nbtTagCompoundInner = new NBTTagCompound();
+        nbtTagCompoundInner.setString("id", id);
+        nbtTagCompound.setTag("ChickenType", nbtTagCompoundInner);
+        return GameRegistry.makeItemStack("chickens:spawn_egg", 0, 1, nbtTagCompound.toString());
     }
     
    

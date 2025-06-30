@@ -194,15 +194,6 @@ public final class ChickensRegistry {
         return maxDiceValue;
     }
 
-    private static int getMaxChance(List<ChickensRegistryItem> possibleChildren) {
-        int maxChance = 0;
-        for (ChickensRegistryItem child : possibleChildren) {
-            maxChance = Math.max(maxChance, child.getTier());
-        }
-        maxChance += 1;
-        return maxChance;
-    }
-
     public static boolean isAnyIn(SpawnType spawnType) {
         for (ChickensRegistryItem chicken : items.values()) {
             if (chicken.canSpawn() && chicken.isEnabled() && chicken.getSpawnType() == spawnType) {

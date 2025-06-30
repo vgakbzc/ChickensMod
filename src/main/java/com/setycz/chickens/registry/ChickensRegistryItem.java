@@ -36,7 +36,9 @@ public class ChickensRegistryItem {
     private float layCoefficient = 1.0f;
     public final int DEFAULT_WEIGHT = 100;
 
-    private int tier = 0;
+    private float rarity = 1.0f;
+    private boolean defaultRarity = true;
+    private float setedRarity = 0.0f;
 
     public class BreedHelper {
         private final ChickensRegistryItem parent1;
@@ -155,6 +157,9 @@ public class ChickensRegistryItem {
         BreedHelper breed = new BreedHelper(parent1, parent2, weight);
         parents.add(breed);
 
+        float parentRarity = parent1.getRarity() + parent2.getRarity() - Math.min(parent1.getRarity(), parent2.getRarity()) / 2;
+        this.rarity = Math.max(this.rarity, parentRarity);
+
         return this;
 
     }
@@ -204,8 +209,15 @@ public class ChickensRegistryItem {
         return layItem.getStack();
     }
 
-    public int getTier(){
-        return parents.size() == 0 ? 1 : 2;
+    public float getRarity(){
+        if(!this.defaultRarity) {
+            return Math.max(1.0f, this.setedRarity);
+        }
+        return Math.max(this.rarity, 1.0f);
+    }
+    public void setRarity(float rarity) {
+        this.defaultRarity = false;
+        this.setedRarity = rarity;
     }
     
 
@@ -252,7 +264,7 @@ public class ChickensRegistryItem {
     }
 
     public int getMinLayTime() {
-        return (int) Math.max(6000 * getTier() * layCoefficient, 1.0f);
+        return (int) Math.min(Math.max(6000 * getRarity() * layCoefficient, 1.0f), 1e9f);
     }
 
     public int getMaxLayTime() {
@@ -291,6 +303,7 @@ public class ChickensRegistryItem {
     
     public ChickensRegistryItem setNoParents() {
         parents = new ArrayList<BreedHelper>();
+        this.rarity = 1.0f;
         return this;
     }
 

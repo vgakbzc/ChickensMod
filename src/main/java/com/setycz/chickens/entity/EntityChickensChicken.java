@@ -100,8 +100,9 @@ public class EntityChickensChicken extends EntityChicken {
         return description;
     }
 
-    public int getTier() {
-        return getChickenDescription().getTier();
+    public String getTier() {
+        int rarity = (int) (100 * getChickenDescription().getRarity());
+        return "" + (rarity/100) + "." + (rarity/10%10) + (rarity%10);
     }
 
     @Override

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.setycz.chickens.api.recipe.ChickensRecipeMaps;
 import com.setycz.chickens.block.BlockHenhouse;
 import com.setycz.chickens.block.TileEntityHenhouse;
 import com.setycz.chickens.builder.ChickensRegistryItemBuilder;
@@ -24,6 +25,7 @@ import com.setycz.chickens.item.ItemColoredEgg;
 import com.setycz.chickens.item.ItemLiquidEgg;
 import com.setycz.chickens.item.ItemSpawnEgg;
 import com.setycz.chickens.metatileentities.multi.ChickensMetaTileEntities;
+import com.setycz.chickens.recipe.RecipeLoader;
 import com.setycz.chickens.registry.ChickensRegistry;
 import com.setycz.chickens.registry.ChickensRegistryItem;
 import com.setycz.chickens.registry.LiquidEggRegistry;
@@ -159,10 +161,6 @@ public class ChickensMod {
 			ChickensMetaTileEntities.register();
 		}
 
-	}
-
-	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public void registerChickens(RegistryEvent.Register<Item> event) {
 	}
 
 	@EventHandler
@@ -348,6 +346,7 @@ public class ChickensMod {
 		event.getRegistry().register(
 				new ShapelessOreRecipe(new ResourceLocation("analyzer"), new ItemStack(ChickensMod.analyzer, 1),
 						new Object[] { new ItemStack(Items.EGG), new ItemStack(Items.COMPASS) }).setRegistryName(ChickensMod.MODID, "analyzer"));
+		RecipeLoader.init();
 	}
 
 	private List<Biome> getAllSpawnBiomes() {
@@ -601,7 +600,7 @@ public class ChickensMod {
 				new ItemStack(Blocks.SOUL_SAND, 1, 0), 0x453125, 0xd52f08, sandChicken, netherwartChicken);
 		chickens.add(soulSandChicken);
 
-		ChickensRegistryItem stoneChicken = new ChickensRegistryItemBuilder("StoneChicken")
+		ChickensRegistryItem stoneChicken = new ChickensRegistryItemBuilder("stoneChicken")
 			.addParents(clayChicken, sandChicken, 50)
 			.setLayItem(new ItemStack(Blocks.STONE))
 			.setColor(0xcfcfcf, 0x3c3c3c)
@@ -610,12 +609,33 @@ public class ChickensMod {
 
 		if (Loader.isModLoaded("gregtech")) { // load gregtech version ore chickens
 
-			ChickensRegistryItem pyriteChicken = new ChickensRegistryItemBuilder("PyriteChicken")
+			ChickensRegistryItem pyriteChicken = new ChickensRegistryItemBuilder("pyriteChicken")
 				.addParents(stoneChicken, sandChicken, 20)
 				.setLayItemGTHolder(OrePrefix.ore, Materials.Pyrite)
-				.setColor(0xcfcfcf, 0x6e3e09)
+				.setColor(0x976e0f, 0xe1b245)
 				.build();
 			chickens.add(pyriteChicken);
+
+			ChickensRegistryItem chalcopyriteChicken = new ChickensRegistryItemBuilder("chalcopyriteChicken")
+				.addParents(netherwartChicken, sandChicken, 20)
+				.setLayItemGTHolder(OrePrefix.ore, Materials.Chalcopyrite)
+				.setColor(0x976e0f, 0xdd660b)
+				.build();
+			chickens.add(chalcopyriteChicken);
+
+			ChickensRegistryItem cassiteriteChicken = new ChickensRegistryItemBuilder("cassiteriteChicken")
+				.addParents(stoneChicken, ghastChicken, 20)
+				.setLayItemGTHolder(OrePrefix.ore, Materials.Cassiterite)
+				.setColor(0xe3e3e3, 0xb4b4b4)
+				.build();
+			chickens.add(cassiteriteChicken);
+
+			ChickensRegistryItem galenaChicken = new ChickensRegistryItemBuilder("galenaChicken")
+				.addParents(stoneChicken, obsidianChicken, 20)
+				.setLayItemGTHolder(OrePrefix.ore, Materials.Galena)
+				.setColor(0xc364a8, 0x8f3174)
+				.build();
+			chickens.add(galenaChicken);
 
 		} else { // load default ore chickens
 

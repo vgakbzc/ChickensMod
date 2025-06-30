@@ -42,7 +42,6 @@ public class MetaTileEntityChickenAltar extends NoEnergyMultiblockController {
     public MetaTileEntityChickenAltar(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, ChickensRecipeMaps.CHICKEN_ALTAR_RECIPES);
         this.recipeMapWorkable = new ChickenAltarRecipeLogic(this);
-        this.recipeMapWorkable.setParallelLimit(PARALLEL_LIMIT);
     }
 
     @Override
@@ -116,6 +115,9 @@ public class MetaTileEntityChickenAltar extends NoEnergyMultiblockController {
         public ChickenAltarRecipeLogic(NoEnergyMultiblockController tileEntity) {
             super(tileEntity, ChickensRecipeMaps.CHICKEN_ALTAR_RECIPES);
         }
+
+        @Override
+        public int getParallelLimit() { return PARALLEL_LIMIT; }
 
     }
 
