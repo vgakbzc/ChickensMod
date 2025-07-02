@@ -3,9 +3,11 @@ package com.setycz.chickens.registry;
 import javax.annotation.Nullable;
 
 import com.setycz.chickens.ChickensMod;
+import com.setycz.chickens.entity.EntityChickensChicken;
 import com.setycz.chickens.handler.ItemHolder;
 import com.setycz.chickens.handler.SpawnType;
 
+import com.setycz.chickens.item.ItemSpawnEgg;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -262,6 +264,9 @@ public class ChickensRegistryItem {
     public ResourceLocation getRegistryName(){
     	return registryName;
     }
+
+    public ItemStack getSpawnEgg() { return getSpawnEgg(1); }
+    public ItemStack getSpawnEgg(int amount) { return ItemSpawnEgg.getSpawnEggById(ChickensMod.MODID + ":" + entityName.toLowerCase(), amount); }
 
     public int getMinLayTime() {
         return (int) Math.min(Math.max(6000 * getRarity() * layCoefficient, 1.0f), 1e9f);

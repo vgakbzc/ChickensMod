@@ -138,11 +138,16 @@ public class ItemSpawnEgg extends Item implements IColorSource {
 
     @Nullable
     public static ItemStack getSpawnEggById(String id) {
+        return getSpawnEggById(id, 1);
+    }
+
+    @Nullable
+    public static ItemStack getSpawnEggById(String id, int amount) {
         NBTTagCompound nbtTagCompound = new NBTTagCompound();
         NBTTagCompound nbtTagCompoundInner = new NBTTagCompound();
         nbtTagCompoundInner.setString("id", id);
         nbtTagCompound.setTag("ChickenType", nbtTagCompoundInner);
-        return GameRegistry.makeItemStack("chickens:spawn_egg", 0, 1, nbtTagCompound.toString());
+        return GameRegistry.makeItemStack("chickens:spawn_egg", 0, amount, nbtTagCompound.toString());
     }
     
    

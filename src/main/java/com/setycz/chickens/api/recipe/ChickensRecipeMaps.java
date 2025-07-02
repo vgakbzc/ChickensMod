@@ -22,4 +22,7 @@ public class ChickensRecipeMaps {
     public static final RecipeMap<SimpleRecipeBuilder> CHICKEN_ALTAR_RECIPES = new RecipeMap<>("chicken_altar", 4, 16, 0, 0, new SimpleRecipeBuilder(), false)
         .setProgressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE, ProgressWidget.MoveType.HORIZONTAL)
         .setSound(GTSoundEvents.SCIENCE);
+    public static final RecipeMap<SimpleRecipeBuilder> ROOST_RECIPES = new RecipeMap<>("chickens_gtroost", 2, 16, 0, 0, new SimpleRecipeBuilder(), false)
+        .setProgressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE, ProgressWidget.MoveType.HORIZONTAL)
+        .setSound(GTSoundEvents.FURNACE);
 }
