@@ -14,7 +14,7 @@ public class ChickensTab extends CreativeTabs {
     }
 
     @Override
-    public ItemStack createIcon() {
+    public ItemStack getTabIconItem() {
         return new ItemStack(Items.CHICKEN);
     }
 

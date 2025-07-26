@@ -1,7 +1,8 @@
 package com.setycz.chickens.metatileentities.multi.steam;
 
+import com.setycz.chickens.api.capability.impl.NoEnergySteamMultiblockRecipeLogic;
 import com.setycz.chickens.api.recipe.ChickensRecipeMaps;
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 import gregtech.api.capability.impl.SteamMultiWorkable;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -31,17 +32,18 @@ import magicbook.gtlitecore.api.metatileentity.multi.NoEnergyMultiblockControlle
 import net.minecraft.util.EnumFacing;
 import gregtech.api.pattern.TraceabilityPredicate;
 import net.minecraft.util.Rotation;
+import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MetaTileEntityRoost extends NoEnergyMultiblockController {
+public class MetaTileEntityRoost extends RecipeMapSteamMultiblockController {
 
-    private static final int PARALLEL_LIMIT = 24;
+    private static final int PARALLEL_LIMIT = 16;
 
     public MetaTileEntityRoost(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, ChickensRecipeMaps.ROOST_RECIPES);
-        this.recipeMapWorkable = new RoostRecipeLogic(this);
+        super(metaTileEntityId, ChickensRecipeMaps.ROOST_RECIPES, 1.0);
+        this.recipeMapWorkable = new RoostRecipeLogic(this, PARALLEL_LIMIT);
     }
 
     @Override
@@ -60,7 +62,7 @@ public class MetaTileEntityRoost extends NoEnergyMultiblockController {
             .where('S', this.selfPredicate())
             .where('A', states(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.COKE_BRICKS))
                 .setMinGlobalLimited(9)
-                .or(autoAbilities(false, true, true, false, false, false)))
+                .or(autoAbilities(false, false, true, true, false)))
             .where('C', getGlassStates())
             .where('D', states(Blocks.HAY_BLOCK.getDefaultState()))
             .where('E', states(Blocks.GLOWSTONE.getDefaultState()))
@@ -85,15 +87,19 @@ public class MetaTileEntityRoost extends NoEnergyMultiblockController {
     @Override
     public boolean hasMaintenanceMechanics() { return false; }
 
-    public class RoostRecipeLogic extends NoEnergyMultiblockRecipeLogic {
-
-        public RoostRecipeLogic(NoEnergyMultiblockController tileEntity) {
-            super(tileEntity, ChickensRecipeMaps.ROOST_RECIPES);
+    public class RoostRecipeLogic extends NoEnergySteamMultiblockRecipeLogic {
+        public RoostRecipeLogic(MetaTileEntityRoost mte, int parallelLimit) {
+            super(mte, parallelLimit);
         }
-
-        @Override
-        public int getParallelLimit() { return PARALLEL_LIMIT; }
-
+        @Override public @NotNull ParallelLogicType getParallelLogicType() {
+            return ParallelLogicType.MULTIPLY;
+        }
+        @Override public void setMaxProgress(int maxProgress) {
+            if(maxProgress > 60 * 20) {
+                maxProgress = (int) Math.sqrt(60.0 * 20 * maxProgress);
+            }
+            this.maxProgressTime = maxProgress;
+        }
     }
 
 }

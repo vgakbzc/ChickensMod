@@ -108,7 +108,7 @@ public class ItemHolder
 			if(item != null) 
 			{
 				stack = new ItemStack(getItem(), this.getAmount(), this.metaID);
-				if(this.nbtData != null && !this.nbtData.isEmpty())
+				if(this.nbtData != null && !this.nbtData.hasNoTags())
 	                	stack.setTagCompound(this.nbtData);
 				
 				isComplete = true;
@@ -159,7 +159,7 @@ public class ItemHolder
 		if(stackSize > 1)
 			data.addProperty("qty", getStackSize());
 		
-		if(nbtData != null && !nbtData.isEmpty()) {
+		if(nbtData != null && !nbtData.hasNoTags()) {
 			JsonElement element = gson.fromJson(nbtData.toString(), JsonElement.class);
 			data.add("nbt", element.getAsJsonObject());
 		}

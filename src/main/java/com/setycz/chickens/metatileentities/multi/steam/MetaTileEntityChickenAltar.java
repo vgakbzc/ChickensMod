@@ -1,7 +1,8 @@
 package com.setycz.chickens.metatileentities.multi.steam;
 
+import com.setycz.chickens.api.capability.impl.NoEnergySteamMultiblockRecipeLogic;
 import com.setycz.chickens.api.recipe.ChickensRecipeMaps;
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 import gregtech.api.capability.impl.SteamMultiWorkable;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -35,13 +36,13 @@ import net.minecraft.util.Rotation;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MetaTileEntityChickenAltar extends NoEnergyMultiblockController {
+public class MetaTileEntityChickenAltar extends RecipeMapSteamMultiblockController {
 
-    private static final int PARALLEL_LIMIT = 64;
+    private static final int PARALLEL_LIMIT = 4;
 
     public MetaTileEntityChickenAltar(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, ChickensRecipeMaps.CHICKEN_ALTAR_RECIPES);
-        this.recipeMapWorkable = new ChickenAltarRecipeLogic(this);
+        super(metaTileEntityId, ChickensRecipeMaps.CHICKEN_ALTAR_RECIPES, 1.0);
+        this.recipeMapWorkable = new ChickenAltarRecipeLogic(this, PARALLEL_LIMIT);
     }
 
     @Override
@@ -76,7 +77,7 @@ public class MetaTileEntityChickenAltar extends NoEnergyMultiblockController {
             .where('G', states(Blocks.HAY_BLOCK.getDefaultState()))
             .where('A', states(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.COKE_BRICKS))
                 .setMinGlobalLimited(11)
-                .or(autoAbilities(false, true, true, false, false, false)))
+                .or(autoAbilities(false, false, true, true, false)))
             .build();
     }
     private TraceabilityPredicate getLogStates() {
@@ -110,15 +111,13 @@ public class MetaTileEntityChickenAltar extends NoEnergyMultiblockController {
     @Override
     public boolean hasMaintenanceMechanics() { return false; }
 
-    public class ChickenAltarRecipeLogic extends NoEnergyMultiblockRecipeLogic {
-
-        public ChickenAltarRecipeLogic(NoEnergyMultiblockController tileEntity) {
-            super(tileEntity, ChickensRecipeMaps.CHICKEN_ALTAR_RECIPES);
+    public class ChickenAltarRecipeLogic extends NoEnergySteamMultiblockRecipeLogic {
+        public ChickenAltarRecipeLogic(MetaTileEntityChickenAltar mte, int parallelLimit) {
+            super(mte, parallelLimit);
         }
-
-        @Override
-        public int getParallelLimit() { return PARALLEL_LIMIT; }
-
+        @Override public void setMaxProgress(int maxProgress) {
+            this.maxProgressTime = (int) Math.sqrt(400.0 * maxProgress);
+        }
     }
 
 }

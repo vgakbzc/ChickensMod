@@ -28,6 +28,7 @@ public class ChickensRegistryItem {
     private final ResourceLocation registryName;
     
     private final String entityName;
+    private final String registryNameString;
     private ItemHolder layItem;
     private ItemHolder dropItem;
     private  int bgColor;
@@ -103,15 +104,16 @@ public class ChickensRegistryItem {
         this.spawnType = SpawnType.NONE;
         this.setNoParents();
 
-        String texturePath = "textures/entity/";
+        String texturePath = "";
         for(int i = 0; i < entityName.length(); i++ ) {
-            if( i != 0 && entityName.charAt(i) >= 'A' && entityName.charAt(i) <= 'Z') {
-                texturePath += "_" + (char)((int)entityName.charAt(i) + (int)'a' - (int)'A');
+            if (i != 0 && entityName.charAt(i) >= 'A' && entityName.charAt(i) <= 'Z') {
+                texturePath += "_" + (char) ((int) entityName.charAt(i) + (int) 'a' - (int) 'A');
             } else {
                 texturePath += entityName.charAt(i);
             }
         }
-        texturePath += ".png";
+        this.registryNameString = texturePath;
+        texturePath = "textures/entity/" + texturePath + ".png";
         this.texture = new ResourceLocation("chickens", texturePath);
     }
 
@@ -125,8 +127,19 @@ public class ChickensRegistryItem {
         this.texture = texture;
         this.spawnType = SpawnType.NORMAL;
         this.addParents(parent1, parent2);
+
+        String texturePath = "";
+        for(int i = 0; i < entityName.length(); i++ ) {
+            if (i != 0 && entityName.charAt(i) >= 'A' && entityName.charAt(i) <= 'Z') {
+                texturePath += "_" + (char) ((int) entityName.charAt(i) + (int) 'a' - (int) 'A');
+            } else {
+                texturePath += entityName.charAt(i);
+            }
+        }
+        this.registryNameString = texturePath;
     }
 
+    public String getRegistryNameString() { return registryNameString; }
 
     public ItemHolder getDropItemHolder() {
     	return this.dropItem == null ? this.layItem : this.dropItem;

@@ -1,0 +1,4 @@
+galena_chicken
+pyrite_chicken
+cassiterite_chicken
+chalcopyrite_chicken

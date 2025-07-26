@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.setycz.chickens.api.recipe.ChickensRecipeMaps;
 import com.setycz.chickens.block.BlockHenhouse;
+import com.setycz.chickens.block.PackedChickens;
 import com.setycz.chickens.block.TileEntityHenhouse;
 import com.setycz.chickens.builder.ChickensRegistryItemBuilder;
 import com.setycz.chickens.client.gui.TileEntityGuiHandler;
@@ -48,6 +49,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -97,26 +99,26 @@ public class ChickensMod {
 	
 	public static final CreativeTabs chickensTab = new ChickensTab();
 
-	public static final Item spawnEgg = new ItemSpawnEgg().setTranslationKey("spawn_egg")
+	public static final Item spawnEgg = new ItemSpawnEgg().setUnlocalizedName("spawn_egg")
 			.setCreativeTab(chickensTab).setRegistryName(ChickensMod.MODID, "spawn_egg");
-	public static final Item coloredEgg = new ItemColoredEgg().setTranslationKey("colored_egg")
+	public static final Item coloredEgg = new ItemColoredEgg().setUnlocalizedName("colored_egg")
 			.setCreativeTab(chickensTab).setRegistryName(ChickensMod.MODID, "colored_egg");
-	public static final Item liquidEgg = new ItemLiquidEgg().setTranslationKey("liquid_egg")
+	public static final Item liquidEgg = new ItemLiquidEgg().setUnlocalizedName("liquid_egg")
 			.setCreativeTab(chickensTab).setRegistryName(ChickensMod.MODID, "liquid_egg");
-	public static final Item analyzer = new ItemAnalyzer().setTranslationKey("analyzer")
+	public static final Item analyzer = new ItemAnalyzer().setUnlocalizedName("analyzer")
 			.setCreativeTab(chickensTab).setRegistryName(ChickensMod.MODID, "analyzer");
 
 	public static final Block henhouse = new BlockHenhouse()
-			.setTranslationKey("henhouse").setCreativeTab(chickensTab).setRegistryName(ChickensMod.MODID, "henhouse");
-	public static final Block henhouse_acacia = new BlockHenhouse().setTranslationKey("henhouse_acacia")
+			.setUnlocalizedName("henhouse").setCreativeTab(chickensTab).setRegistryName(ChickensMod.MODID, "henhouse");
+	public static final Block henhouse_acacia = new BlockHenhouse().setUnlocalizedName("henhouse_acacia")
 			.setCreativeTab(chickensTab).setRegistryName(ChickensMod.MODID, "henhouse_acacia");
-	public static final Block henhouse_birch = new BlockHenhouse().setTranslationKey("henhouse_birch")
+	public static final Block henhouse_birch = new BlockHenhouse().setUnlocalizedName("henhouse_birch")
 			.setCreativeTab(chickensTab).setRegistryName(ChickensMod.MODID, "henhouse_birch");
-	public static final Block henhouse_dark_oak = new BlockHenhouse().setTranslationKey("henhouse_dark_oak")
+	public static final Block henhouse_dark_oak = new BlockHenhouse().setUnlocalizedName("henhouse_dark_oak")
 			.setCreativeTab(chickensTab).setRegistryName(ChickensMod.MODID, "henhouse_dark_oak");
-	public static final Block henhouse_jungle = new BlockHenhouse().setTranslationKey("henhouse_jungle")
+	public static final Block henhouse_jungle = new BlockHenhouse().setUnlocalizedName("henhouse_jungle")
 			.setCreativeTab(chickensTab).setRegistryName(ChickensMod.MODID, "henhouse_jungle");
-	public static final Block henhouse_spruce = new BlockHenhouse().setTranslationKey("henhouse_spruce")
+	public static final Block henhouse_spruce = new BlockHenhouse().setUnlocalizedName("henhouse_spruce")
 			.setCreativeTab(chickensTab).setRegistryName(ChickensMod.MODID, "henhouse_spruce");
 
 	public static final TileEntityGuiHandler guiHandler = new TileEntityGuiHandler();
@@ -163,6 +165,10 @@ public class ChickensMod {
 
 	}
 
+	@SubscribeEvent public static void registerModels(ModelRegistryEvent event) {
+		PackedChickens.initModels();
+	}
+
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		dumpChickens(ChickensRegistry.getItems());
@@ -189,6 +195,10 @@ public class ChickensMod {
 		
 		OreDictionary.registerOre("egg", coloredEgg);
 		OreDictionary.registerOre("listAllegg", coloredEgg);
+
+		for(Block block: PackedChickens.registryNameToBlock.values()) {
+			registerItemForBlock(block);
+		}
 	}
 
 	@SubscribeEvent
@@ -201,10 +211,14 @@ public class ChickensMod {
 		blockRegistry.register(henhouse_dark_oak);
 		blockRegistry.register(henhouse_jungle);
 		blockRegistry.register(henhouse_spruce);
+
+		for(Block block: PackedChickens.registryNameToBlock.values()) {
+			blockRegistry.register(block);
+		}
 	}
 
 	public static void registerBlock(Block block) {
-		blockRegistry.register(block.setRegistryName(block.getTranslationKey().substring(5)));
+		blockRegistry.register(block.setRegistryName(block.getUnlocalizedName().substring(5)));
 	}
 	
 	public static void registerItemForBlock(Block block) {
@@ -316,7 +330,7 @@ public class ChickensMod {
 								: new ItemStack(Blocks.PLANKS, 1, type.getMetadata()),
 						'H', Blocks.HAY_BLOCK });
 
-		event.register(recipe.setRegistryName(ChickensMod.MODID, henhouse.getTranslationKey()));
+		event.register(recipe.setRegistryName(ChickensMod.MODID, henhouse.getUnlocalizedName()));
 
 	}
 
@@ -615,6 +629,7 @@ public class ChickensMod {
 				.setColor(0x976e0f, 0xe1b245)
 				.build();
 			chickens.add(pyriteChicken);
+			PackedChickens.add(pyriteChicken.getRegistryNameString());
 
 			ChickensRegistryItem chalcopyriteChicken = new ChickensRegistryItemBuilder("chalcopyriteChicken")
 				.addParents(netherwartChicken, sandChicken, 20)
@@ -622,6 +637,7 @@ public class ChickensMod {
 				.setColor(0x976e0f, 0xdd660b)
 				.build();
 			chickens.add(chalcopyriteChicken);
+			PackedChickens.add(chalcopyriteChicken.getRegistryNameString());
 
 			ChickensRegistryItem cassiteriteChicken = new ChickensRegistryItemBuilder("cassiteriteChicken")
 				.addParents(stoneChicken, ghastChicken, 20)
@@ -629,6 +645,7 @@ public class ChickensMod {
 				.setColor(0xe3e3e3, 0xb4b4b4)
 				.build();
 			chickens.add(cassiteriteChicken);
+			PackedChickens.add(cassiteriteChicken.getRegistryNameString());
 
 			ChickensRegistryItem galenaChicken = new ChickensRegistryItemBuilder("galenaChicken")
 				.addParents(stoneChicken, obsidianChicken, 20)
@@ -636,6 +653,7 @@ public class ChickensMod {
 				.setColor(0xc364a8, 0x8f3174)
 				.build();
 			chickens.add(galenaChicken);
+			PackedChickens.add(galenaChicken.getRegistryNameString());
 
 		} else { // load default ore chickens
 
@@ -684,15 +702,17 @@ public class ChickensMod {
 
 		}
 
+
+
 		return chickens;
 
 	}
 
 	public static String getItemName(Item item) {
-		return item.getTranslationKey().substring(5);
+		return item.getUnlocalizedName().substring(5);
 	}
 
 	public static String getBlockName(Block block) {
-		return block.getTranslationKey().substring(5);
+		return block.getUnlocalizedName().substring(5);
 	}
 }

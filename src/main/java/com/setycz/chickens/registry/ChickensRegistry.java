@@ -11,7 +11,7 @@ import java.util.Random;
 import com.setycz.chickens.ChickensMod;
 import com.setycz.chickens.handler.SpawnType;
 
-import com.sun.istack.internal.Nullable;
+import org.jetbrains.annotations.Nullable;
 import net.minecraft.init.Biomes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;

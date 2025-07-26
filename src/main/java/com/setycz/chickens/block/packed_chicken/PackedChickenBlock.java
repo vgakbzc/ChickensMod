@@ -1,0 +1,106 @@
+package com.setycz.chickens.block.packed_chicken;
+
+import com.setycz.chickens.ChickensMod;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.translation.I18n;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.item.Item;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraftforge.client.model.ModelLoader;
+import org.jline.utils.Log;
+
+import java.util.logging.LogManager;
+
+public class PackedChickenBlock extends Block {
+
+    public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
+
+    private String chickenRegistryName;
+
+    public PackedChickenBlock(String chickenRegistryName) {
+        super(Material.WOOD);
+        this.chickenRegistryName = chickenRegistryName;
+        setUnlocalizedName("packed." + chickenRegistryName);
+        setRegistryName("packed_" + chickenRegistryName);
+
+        setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void initModel() {
+        String modelResourceLocation = "" + getRegistryName();
+        ModelLoader.setCustomModelResourceLocation(
+            Item.getItemFromBlock(this), 0,
+            new ModelResourceLocation(modelResourceLocation, "inventory")
+        );
+        FMLLog.info("ChickensModelLoader: Loading model " + modelResourceLocation);
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+        world.setBlockState(pos, state.withProperty(FACING, getFacingFromEntity(pos, placer)), 2);
+    }
+
+    public static EnumFacing getFacingFromEntity(BlockPos clickedBlock, EntityLivingBase entity) {
+        EnumFacing facing = EnumFacing.getFacingFromVector(
+            (float) (entity.posX - clickedBlock.getX()),
+            (float) (0.0),
+            (float) (entity.posZ - clickedBlock.getZ()));
+        if(facing.getAxis() == EnumFacing.Axis.Y) {
+            facing = EnumFacing.NORTH;
+        }
+        return facing;
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(FACING, EnumFacing.getFront(meta & 7).getAxis() == EnumFacing.Axis.Y ?
+            EnumFacing.NORTH : EnumFacing.getFront(meta & 7));
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return state.getValue(FACING).getIndex();
+    }
+
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, FACING);
+    }
+
+    @Override
+    public boolean isFullBlock(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public BlockRenderLayer getBlockLayer() { return BlockRenderLayer.CUTOUT; }
+
+}
