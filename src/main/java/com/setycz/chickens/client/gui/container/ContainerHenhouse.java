@@ -3,7 +3,7 @@ package com.setycz.chickens.client.gui.container;
 import javax.annotation.Nonnull;
 
 import com.setycz.chickens.block.TileEntityHenhouse;
-import com.setycz.chickens.capabilities.InventoryStroageModifiable;
+import com.setycz.chickens.capabilities.InventoryStorageModifiable;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -21,14 +21,14 @@ import net.minecraftforge.items.SlotItemHandler;
 public class ContainerHenhouse extends Container {
 
     private final TileEntityHenhouse tileEntityHenhouse;
-    private InventoryStroageModifiable invTileEntityHenhouse;
+    private InventoryStorageModifiable invTileEntityHenhouse;
     private int energy;
     
      
     public ContainerHenhouse(InventoryPlayer playerInventory, TileEntityHenhouse tileEntityHenhouse) {
         this.tileEntityHenhouse = tileEntityHenhouse;
          
-        this.invTileEntityHenhouse = (InventoryStroageModifiable) tileEntityHenhouse.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
+        this.invTileEntityHenhouse = (InventoryStorageModifiable) tileEntityHenhouse.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
              
         //input 
         // Overriding canTake and decrStack to use the internal extract and by pass the locks in place for other things taking items. 

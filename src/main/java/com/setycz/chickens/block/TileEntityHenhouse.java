@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.setycz.chickens.capabilities.InventoryStroageModifiable;
+import com.setycz.chickens.capabilities.InventoryStorageModifiable;
 import com.setycz.chickens.client.gui.GuiHenhouse;
 import com.setycz.chickens.client.gui.IInventoryGui;
 import com.setycz.chickens.client.gui.container.ContainerHenhouse;
@@ -45,7 +45,7 @@ public class TileEntityHenhouse extends TileEntity implements IInventoryGui {
     private static final double FENCE_THRESHOLD = 0.5;
 
     private String customName;
-    private final InventoryStroageModifiable slots = new InventoryStroageModifiable("container.henhouse", 11)
+    private final InventoryStorageModifiable slots = new InventoryStorageModifiable("container.henhouse", 11)
     		{
     			@Override
     			public boolean canInsertSlot(int slotIndex, ItemStack stackIn)

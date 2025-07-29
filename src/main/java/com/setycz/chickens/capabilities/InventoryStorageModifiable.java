@@ -8,16 +8,16 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.ItemStackHandler;
 
-public class InventoryStroageModifiable extends ItemStackHandler
+public class InventoryStorageModifiable extends ItemStackHandler
 {
 	   private final String name;
 	    
-	    public InventoryStroageModifiable(int inventorySize)
+	    public InventoryStorageModifiable(int inventorySize)
 	    {
 	        this(null, inventorySize);
 	    }
 	 
-	    public InventoryStroageModifiable(String name, int inventorySize)
+	    public InventoryStorageModifiable(String name, int inventorySize)
 	    {
 	        super(inventorySize);
 	        this.name = name;
