@@ -1,0 +1,9 @@
+{
+  "parent": "block/orientable",
+  "textures": {
+    "top": "chickens:blocks/accelerators/top/iron",
+    "bottom": "chickens:blocks/accelerators/top/iron",
+    "side": "chickens:blocks/accelerators/side/iron",
+    "front": "chickens:blocks/accelerators/side/iron"
+  }
+}

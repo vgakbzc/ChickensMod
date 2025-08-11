@@ -3,6 +3,7 @@ package com.setycz.chickens.registry;
 import javax.annotation.Nullable;
 
 import com.setycz.chickens.ChickensMod;
+import com.setycz.chickens.block.BlockInit;
 import com.setycz.chickens.entity.EntityChickensChicken;
 import com.setycz.chickens.handler.ItemHolder;
 import com.setycz.chickens.handler.SpawnType;
@@ -105,6 +106,11 @@ public class ChickensRegistryItem {
         this.setNoParents();
 
         String texturePath = "";
+        if(entityName.length() > 0) {
+            if(entityName.charAt(0) >= 'A' && entityName.charAt(0) <= 'A') {
+                entityName = (entityName.charAt(0) + (int)'a' - (int)'A') + entityName.substring(1);
+            }
+        }
         for(int i = 0; i < entityName.length(); i++ ) {
             if (i != 0 && entityName.charAt(i) >= 'A' && entityName.charAt(i) <= 'Z') {
                 texturePath += "_" + (char) ((int) entityName.charAt(i) + (int) 'a' - (int) 'A');

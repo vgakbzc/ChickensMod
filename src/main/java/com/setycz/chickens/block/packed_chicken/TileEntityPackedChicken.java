@@ -1,23 +1,31 @@
 package com.setycz.chickens.block.packed_chicken;
 
+import com.setycz.chickens.block.accelerators.BlockAccelerator;
 import com.setycz.chickens.capabilities.InventoryStorageModifiable;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 
-public class TileEntityPackedChicken extends TileEntity {
+public class TileEntityPackedChicken extends TileEntity implements ITickable {
 
-    private Item layItem = null;
     private float currentProgress = 0;
+    private float multiplier = 1.0f;
+    private int tickInterval = 0;
+    private final int MIN_TICK_INTERVAL = 20;
+    private ItemStack layItem;
     private float maxProgress = 1.0f;
+    private boolean isInit = false;
 
     private final InventoryStorageModifiable slots = new InventoryStorageModifiable("container.packed_chicken", 1)
     {
@@ -101,6 +109,10 @@ public class TileEntityPackedChicken extends TileEntity {
         }
     };
 
+    public TileEntityPackedChicken() {
+        super();
+    }
+
     public void dropContents() {
         for (int i = 0; i < this.slots.getSlots(); ++i) {
             ItemStack stack = this.slots.extractItemInternal(i, this.slots.getSlotLimit(i), false);
@@ -116,17 +128,45 @@ public class TileEntityPackedChicken extends TileEntity {
         return stack;
     }
 
-    public void progress(float multiplier) {
-        currentProgress += multiplier;
+    public void update() {
+        if(!isInit) {
+            try{ init(); } catch(NullPointerException exception){
+                // isInit = false;
+                return;
+            }
+            isInit = true;
+        }
+        if(tickInterval < MIN_TICK_INTERVAL) {
+            ++tickInterval; return;
+        }
+        calculateNeighborBonus();
+        currentProgress += multiplier * tickInterval;
+        tickInterval = 0;
         if(currentProgress > maxProgress) {
 
             int count = (int) Math.floor(Math.min(2E9, currentProgress / maxProgress));
-            ItemStack layItemStack = new ItemStack(this.layItem, count);
-            pushItemStack(layItemStack);
+            pushItemStack(getLayItem(count));
 
             currentProgress = Math.max(0f, currentProgress - count * maxProgress);
 
         }
+    }
+
+    private void calculateNeighborBonus() {
+        BlockPos blockPos = this.getPos();
+        int countSpecie = 0; float countAccelerator = 0;
+        final float specieSpeedBonus[] = {1.0f, 1.5f, 3.0f, 6.0f, 10.0f, 20.0f, 60.0f, 100.0f};
+        for(EnumFacing facing : EnumFacing.values()) {
+            BlockPos neighborBlockPos = blockPos.offset(facing);
+            IBlockState blockstate = this.getWorld().getBlockState(neighborBlockPos);
+            if(blockstate.getBlock() == this.getBlockType()) {
+                countSpecie++;
+            }
+            if(blockstate.getBlock() instanceof BlockAccelerator) {
+                countAccelerator += ((BlockAccelerator) blockstate.getBlock()).getAccelerationMultiplier();
+            }
+        }
+        this.multiplier = specieSpeedBonus[countSpecie] * (1.0f + countAccelerator);
     }
 
     @Override
@@ -147,8 +187,6 @@ public class TileEntityPackedChicken extends TileEntity {
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setInteger("ItemCount", slots.getStackInSlot(0).getCount());
-        compound.setTag("LayItem", (new ItemStack(this.layItem)).serializeNBT());
-        compound.setFloat("MaxProgress", this.maxProgress);
         compound.setFloat("CurrentProgress", this.currentProgress);
         return compound;
     }
@@ -156,22 +194,32 @@ public class TileEntityPackedChicken extends TileEntity {
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
+        init();
         int count = compound.getInteger("ItemCount");
-        this.layItem = (new ItemStack(compound.getCompoundTag("LayItem"))).getItem();
-        pushItemStack(new ItemStack(this.layItem, count));
-        this.maxProgress = compound.getFloat("MaxProgress");
+        pushItemStack(this.getLayItem(count));
         this.currentProgress = compound.getFloat("CurrentProgress");
     }
+    public float getEtaTime() { return (maxProgress - currentProgress) / multiplier; }
+    public float getMaxTime() { return maxProgress / multiplier; }
+    public float getEfficiency() { return 1.0f / getMaxTime(); }
+    public float getEfficiencyMultiplier() { return multiplier; }
 
-    public void setMaxProgress(float maxProgress) {
-        if(maxProgress <= 1.0f) {
-            this.maxProgress = 1.0f;
-        } else {
-            this.maxProgress = maxProgress;
+    private void init() {
+        Block block = this.getWorld().getBlockState(this.getPos()).getBlock();
+        if(block instanceof BlockPackedChicken) {
+            float maxProgress = 0.25f * ((BlockPackedChicken) block).getChicken().getMinLayTime();
+            if(maxProgress < 1.0f) {
+                this.maxProgress = 1.0f;
+            } else {
+                this.maxProgress = maxProgress;
+            }
+            this.layItem = ((BlockPackedChicken) block).getChicken().getLayItemHolder().getStack();
         }
     }
-    public void setLayItem(Item layItem) {
-        this.layItem = layItem;
+    private ItemStack getLayItem(int count) {
+        ItemStack stack = this.layItem.copy();
+        stack.setCount(count);
+        return stack;
     }
 
 }

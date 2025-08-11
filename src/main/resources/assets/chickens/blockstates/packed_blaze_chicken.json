@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "chickens:packed_blaze_chicken"
+    },
+    "inventory": {
+      "model": "chickens:packed_blaze_chicken"
+    },
+    "facing=south": {
+      "model": "chickens:packed_blaze_chicken"
+    },
+    "facing=east": {
+      "model": "chickens:packed_blaze_chicken",
+      "y": 270
+    },
+    "facing=west": {
+      "model": "chickens:packed_blaze_chicken",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "chickens:packed_blaze_chicken",
+      "y": 180
+    }
+  }
+}

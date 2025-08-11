@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.setycz.chickens.api.recipe.ChickensRecipeMaps;
 import com.setycz.chickens.block.BlockHenhouse;
-import com.setycz.chickens.block.PackedChickens;
+import com.setycz.chickens.block.BlockInit;
 import com.setycz.chickens.block.TileEntityHenhouse;
 import com.setycz.chickens.block.packed_chicken.TileEntityPackedChicken;
 import com.setycz.chickens.builder.ChickensRegistryItemBuilder;
@@ -168,7 +168,8 @@ public class ChickensMod {
 	}
 
 	@SubscribeEvent public static void registerModels(ModelRegistryEvent event) {
-		PackedChickens.initModels();
+		BlockInit.PackedChickens.initModels();
+		BlockInit.Accelerators.initModels();
 	}
 
 	@EventHandler
@@ -198,7 +199,10 @@ public class ChickensMod {
 		OreDictionary.registerOre("egg", coloredEgg);
 		OreDictionary.registerOre("listAllegg", coloredEgg);
 
-		for(Block block: PackedChickens.blockPockedChickens.values()) {
+		for(Block block: BlockInit.PackedChickens.blockPackedChickens.values()) {
+			registerItemForBlock(block);
+		}
+		for(Block block: BlockInit.Accelerators.accelerators) {
 			registerItemForBlock(block);
 		}
 	}
@@ -214,7 +218,10 @@ public class ChickensMod {
 		blockRegistry.register(henhouse_jungle);
 		blockRegistry.register(henhouse_spruce);
 
-		for(Block block: PackedChickens.blockPockedChickens.values()) {
+		for(Block block: BlockInit.PackedChickens.blockPackedChickens.values()) {
+			blockRegistry.register(block);
+		}
+		for(Block block: BlockInit.Accelerators.accelerators) {
 			blockRegistry.register(block);
 		}
 	}
@@ -268,7 +275,7 @@ public class ChickensMod {
 		
 		
         if (Loader.isModLoaded("theoneprobe")) {
-            FMLInterModComms.sendFunctionMessage("theoneprobe", "GetTheOneProbe", "com.setycz.chickens.top.TheOneProbePlugin$GetTheOneProbe");
+            FMLInterModComms.sendFunctionMessage("theoneprobe", "GetTheOneProbe", "com.setycz.chickens.top.GetTheOneProbe");
         }
 
 	}
@@ -593,13 +600,13 @@ public class ChickensMod {
 		chickens.add(magmaChicken);
 
 		ChickensRegistryItem pShardChicken = new ChickensRegistryItem(
-				new ResourceLocation(ChickensMod.MODID, "pShardChicken"), "pShardChicken",
+				new ResourceLocation(ChickensMod.MODID, "pshardChicken"), "pshardChicken",
 				new ResourceLocation("chickens", "textures/entity/pshard_chicken.png"),
 				new ItemStack(Items.PRISMARINE_SHARD), 0x43806e, 0x9fcbbc, waterChicken, flintChicken);
 		chickens.add(pShardChicken);
 
 		ChickensRegistryItem pCrystalChicken = new ChickensRegistryItem(
-				new ResourceLocation(ChickensMod.MODID, "pCrystalChicken"), "pCrystalChicken",
+				new ResourceLocation(ChickensMod.MODID, "pcrystalChicken"), "pcrystalChicken",
 				new ResourceLocation("chickens", "textures/entity/pcrystal_chicken.png"),
 				new ItemStack(Items.PRISMARINE_CRYSTALS, 1, 0), 0x4e6961, 0xdfe9dc, pShardChicken, ghastChicken);
 		chickens.add(pCrystalChicken);
@@ -610,11 +617,11 @@ public class ChickensMod {
 				new ItemStack(Blocks.OBSIDIAN, 1, 0), 0x08080e, 0x463a60, waterChicken, lavaChicken);
 		chickens.add(obsidianChicken);
 
-		ChickensRegistryItem soulSandChicken = new ChickensRegistryItem(
-				new ResourceLocation(ChickensMod.MODID, "soulSandChicken"), "soulSandChicken",
+		ChickensRegistryItem soulsandChicken = new ChickensRegistryItem(
+				new ResourceLocation(ChickensMod.MODID, "soulsandChicken"), "soulsandChicken",
 				new ResourceLocation("chickens", "textures/entity/soulsand_chicken.png"),
 				new ItemStack(Blocks.SOUL_SAND, 1, 0), 0x453125, 0xd52f08, sandChicken, netherwartChicken);
-		chickens.add(soulSandChicken);
+		chickens.add(soulsandChicken);
 
 		ChickensRegistryItem stoneChicken = new ChickensRegistryItemBuilder("stoneChicken")
 			.addParents(clayChicken, sandChicken, 50)
@@ -631,7 +638,7 @@ public class ChickensMod {
 				.setColor(0x976e0f, 0xe1b245)
 				.build();
 			chickens.add(pyriteChicken);
-			PackedChickens.add(pyriteChicken);
+			//BlockInit.PackedChickens.add(pyriteChicken);
 
 			ChickensRegistryItem chalcopyriteChicken = new ChickensRegistryItemBuilder("chalcopyriteChicken")
 				.addParents(netherwartChicken, sandChicken, 20)
@@ -639,7 +646,7 @@ public class ChickensMod {
 				.setColor(0x976e0f, 0xdd660b)
 				.build();
 			chickens.add(chalcopyriteChicken);
-			PackedChickens.add(chalcopyriteChicken);
+			//BlockInit.PackedChickens.add(chalcopyriteChicken);
 
 			ChickensRegistryItem cassiteriteChicken = new ChickensRegistryItemBuilder("cassiteriteChicken")
 				.addParents(stoneChicken, ghastChicken, 20)
@@ -647,7 +654,7 @@ public class ChickensMod {
 				.setColor(0xe3e3e3, 0xb4b4b4)
 				.build();
 			chickens.add(cassiteriteChicken);
-			PackedChickens.add(cassiteriteChicken);
+			//BlockInit.PackedChickens.add(cassiteriteChicken);
 
 			ChickensRegistryItem galenaChicken = new ChickensRegistryItemBuilder("galenaChicken")
 				.addParents(stoneChicken, obsidianChicken, 20)
@@ -655,7 +662,7 @@ public class ChickensMod {
 				.setColor(0xc364a8, 0x8f3174)
 				.build();
 			chickens.add(galenaChicken);
-			PackedChickens.add(galenaChicken);
+			//BlockInit.PackedChickens.add(galenaChicken);
 
 		} else { // load default ore chickens
 
@@ -704,7 +711,9 @@ public class ChickensMod {
 
 		}
 
-
+		for(ChickensRegistryItem chicken : chickens) {
+			BlockInit.PackedChickens.add(chicken);
+		}
 
 		return chickens;
 

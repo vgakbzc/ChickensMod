@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.Side;
@@ -34,7 +35,6 @@ public class BlockPackedChicken extends BlockContainer {
         this.chicken = chicken;
         setUnlocalizedName("packed." + chicken.getRegistryNameString());
         setRegistryName("packed_" + chicken.getRegistryNameString());
-        setTickRandomly(true);
         setHardness(1.0F);
         setResistance(1F);
 
@@ -44,8 +44,6 @@ public class BlockPackedChicken extends BlockContainer {
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
         TileEntityPackedChicken te = new TileEntityPackedChicken();
-        te.setMaxProgress(chicken.getMinLayTime() * 1.83105E-4f);
-        te.setLayItem(chicken.getLayItemHolder().getItem());
         return te;
     }
 
@@ -62,8 +60,7 @@ public class BlockPackedChicken extends BlockContainer {
     public void initModel() {
         String modelResourceLocation = "" + getRegistryName();
         ModelLoader.setCustomModelResourceLocation(
-            Item.getItemFromBlock(this), 0,
-            new ModelResourceLocation(modelResourceLocation, "inventory")
+            Item.getItemFromBlock(this), 0, (new ModelResourceLocation(modelResourceLocation, "inventory"))
         );
         FMLLog.info("ChickensModelLoader: Loading model " + modelResourceLocation);
     }
@@ -119,17 +116,11 @@ public class BlockPackedChicken extends BlockContainer {
     public BlockRenderLayer getBlockLayer() { return BlockRenderLayer.CUTOUT; }
 
     @Override
-    public void randomTick(World worldIn, BlockPos pos, IBlockState state, Random random) {
-        TileEntity tileEntity = worldIn.getTileEntity(pos);
-        if(tileEntity instanceof TileEntityPackedChicken) {
-            ((TileEntityPackedChicken) tileEntity).progress(1.0f);
-//            FMLLog.info("PackedChickens: Random Tick at block pos %d %d %d", pos.getX(), pos.getY(), pos.getZ());
-        }
-    }
-
-    @Override
     public EnumBlockRenderType getRenderType(IBlockState state) {
         return EnumBlockRenderType.MODEL;
     }
 
+    public ChickensRegistryItem getChicken() {
+        return chicken;
+    }
 }
