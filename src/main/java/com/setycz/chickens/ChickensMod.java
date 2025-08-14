@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 
 import com.setycz.chickens.api.recipe.ChickensRecipeMaps;
 import com.setycz.chickens.block.BlockHenhouse;
 import com.setycz.chickens.block.BlockInit;
 import com.setycz.chickens.block.TileEntityHenhouse;
+import com.setycz.chickens.block.breeder.TileEntityBreeder;
 import com.setycz.chickens.block.packed_chicken.TileEntityPackedChicken;
 import com.setycz.chickens.builder.ChickensRegistryItemBuilder;
 import com.setycz.chickens.client.gui.TileEntityGuiHandler;
@@ -124,6 +126,8 @@ public class ChickensMod {
 
 	public static final TileEntityGuiHandler guiHandler = new TileEntityGuiHandler();
 
+	public static final Random RANDOM = new Random();
+
 	@SidedProxy(clientSide = "com.setycz.chickens.client.ClientProxy", serverSide = "com.setycz.chickens.common.CommonProxy")
 	public static CommonProxy proxy;
 
@@ -160,6 +164,7 @@ public class ChickensMod {
 
 		GameRegistry.registerTileEntity(TileEntityHenhouse.class, "henhouse");
 		GameRegistry.registerTileEntity(TileEntityPackedChicken.class, "packed_chicken");
+		GameRegistry.registerTileEntity(TileEntityBreeder.class, "breeder");
 
 		if(Loader.isModLoaded("gregtech")) {
 			ChickensMetaTileEntities.register();
@@ -168,8 +173,7 @@ public class ChickensMod {
 	}
 
 	@SubscribeEvent public static void registerModels(ModelRegistryEvent event) {
-		BlockInit.PackedChickens.initModels();
-		BlockInit.Accelerators.initModels();
+		BlockInit.initModels();
 	}
 
 	@EventHandler
@@ -199,10 +203,7 @@ public class ChickensMod {
 		OreDictionary.registerOre("egg", coloredEgg);
 		OreDictionary.registerOre("listAllegg", coloredEgg);
 
-		for(Block block: BlockInit.PackedChickens.blockPackedChickens.values()) {
-			registerItemForBlock(block);
-		}
-		for(Block block: BlockInit.Accelerators.accelerators) {
+		for(Block block: BlockInit.getBlocks()) {
 			registerItemForBlock(block);
 		}
 	}
@@ -218,10 +219,7 @@ public class ChickensMod {
 		blockRegistry.register(henhouse_jungle);
 		blockRegistry.register(henhouse_spruce);
 
-		for(Block block: BlockInit.PackedChickens.blockPackedChickens.values()) {
-			blockRegistry.register(block);
-		}
-		for(Block block: BlockInit.Accelerators.accelerators) {
+		for(Block block: BlockInit.getBlocks()) {
 			blockRegistry.register(block);
 		}
 	}
