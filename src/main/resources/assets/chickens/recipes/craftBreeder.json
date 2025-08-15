@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern":
+  [
+    "xbx",
+    "b b",
+    "xax"
+  ],
+  "key": {
+    "x": {
+      "item": "minecraft:stick"
+    },
+    "a": {
+      "item": "minecraft:iron_block"
+    },
+    "b": {
+      "item": "minecraft:glass"
+    }
+  },
+  "result":
+  {
+    "item": "chickens:breeder",
+    "count": 4
+  }
+}

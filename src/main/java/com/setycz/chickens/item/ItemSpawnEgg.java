@@ -8,6 +8,7 @@ import com.setycz.chickens.handler.IColorSource;
 import com.setycz.chickens.registry.ChickensRegistry;
 import com.setycz.chickens.registry.ChickensRegistryItem;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,9 +21,9 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by setyc on 12.02.2016.
@@ -45,11 +46,14 @@ public class ItemSpawnEgg extends Item implements IColorSource {
         }
     }
 
-    @Override
+    @Override @NotNull
     public String getItemStackDisplayName(ItemStack stack) {
         ChickensRegistryItem chickenDescription = ChickensRegistry.getByRegistryName(getTypeFromStack(stack));
         if(chickenDescription == null) return "null";
-        return I18n.translateToLocal("entity." + chickenDescription.getEntityName() + ".name");
+        if(I18n.hasKey(chickenDescription.getTranslationKeyName())) {
+            return I18n.format(chickenDescription.getTranslationKeyName());
+        }
+        return I18n.format("entity.chicken.name", chickenDescription.getLayItemHolder().getStack().getDisplayName());
     }
 
 

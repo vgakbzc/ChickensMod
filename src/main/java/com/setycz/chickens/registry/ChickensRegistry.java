@@ -23,8 +23,10 @@ public final class ChickensRegistry {
     
 	private static final Map<ResourceLocation, ChickensRegistryItem> items = new HashMap<ResourceLocation, ChickensRegistryItem>();
     private static final Map<String, ChickensRegistryItem> STRING_TO_ITEM = new HashMap<String, ChickensRegistryItem>();
+    public static final List<ChickensRegistryItem> chickens = new ArrayList<>();
+    public static final List<ChickensRegistryItem> chickensCatchable = new ArrayList<>();
     
-    public static final ResourceLocation SMART_CHICKEN_ID = new ResourceLocation(ChickensMod.MODID ,"SmartChicken");
+    public static final ResourceLocation SMART_CHICKEN_ID = new ResourceLocation(ChickensMod.MODID ,"smart_chicken");
     private static final Random rand = new Random();
 
     public static void register(ChickensRegistryItem entity) {

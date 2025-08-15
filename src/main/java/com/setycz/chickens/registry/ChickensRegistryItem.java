@@ -29,7 +29,6 @@ public class ChickensRegistryItem {
     private final ResourceLocation registryName;
     
     private final String entityName;
-    private final String registryNameString;
     private ItemHolder layItem;
     private ItemHolder dropItem;
     private  int bgColor;
@@ -39,6 +38,7 @@ public class ChickensRegistryItem {
     private boolean isEnabled = true;
     private float layCoefficient = 1.0f;
     public final int DEFAULT_WEIGHT = 100;
+    private final String translationKeyName;
 
     private float rarity = 1.0f;
     private boolean defaultRarity = true;
@@ -95,8 +95,6 @@ public class ChickensRegistryItem {
     	this(registryName, entityName, texture, new ItemHolder(layItem, false), bgColor, fgColor, parent1, parent2);
     }
     public ChickensRegistryItem(String entityName) {
-        this.registryName = new ResourceLocation(ChickensMod.MODID, entityName);
-        this.entityName = entityName;
         layItem = null;
         dropItem = null;
         this.bgColor = 0xffffff;
@@ -104,11 +102,12 @@ public class ChickensRegistryItem {
         // this.texture = new ResourceLocation("chickens", "textures/entity/flint_chicken.png");
         this.spawnType = SpawnType.NONE;
         this.setNoParents();
+        this.translationKeyName = entityName;
 
         String texturePath = "";
-        if(entityName.length() > 0) {
-            if(entityName.charAt(0) >= 'A' && entityName.charAt(0) <= 'A') {
-                entityName = (entityName.charAt(0) + (int)'a' - (int)'A') + entityName.substring(1);
+        if(!entityName.isEmpty()) {
+            if(entityName.charAt(0) >= 'A' && entityName.charAt(0) <= 'Z') {
+                entityName = (char)((int) entityName.charAt(0) + (int)'a' - (int)'A') + entityName.substring(1);
             }
         }
         for(int i = 0; i < entityName.length(); i++ ) {
@@ -118,23 +117,28 @@ public class ChickensRegistryItem {
                 texturePath += entityName.charAt(i);
             }
         }
-        this.registryNameString = texturePath;
+        this.registryName = new ResourceLocation(ChickensMod.MODID, texturePath);
+        this.entityName = texturePath;
         texturePath = "textures/entity/" + texturePath + ".png";
         this.texture = new ResourceLocation("chickens", texturePath);
     }
 
     @Deprecated
     public ChickensRegistryItem(ResourceLocation registryName, String entityName, ResourceLocation texture, ItemHolder layItem, int bgColor, int fgColor, @Nullable ChickensRegistryItem parent1, @Nullable ChickensRegistryItem parent2) {
-        this.registryName = registryName;
-        this.entityName = entityName;
         this.layItem = layItem;
         this.bgColor = bgColor;
         this.fgColor = fgColor;
         this.texture = texture;
         this.spawnType = SpawnType.NORMAL;
         this.addParents(parent1, parent2);
+        this.translationKeyName = entityName;
 
         String texturePath = "";
+        if(!entityName.isEmpty()) {
+            if(entityName.charAt(0) >= 'A' && entityName.charAt(0) <= 'Z') {
+                entityName = (char)((int) entityName.charAt(0) + (int)'a' - (int)'A') + entityName.substring(1);
+            }
+        }
         for(int i = 0; i < entityName.length(); i++ ) {
             if (i != 0 && entityName.charAt(i) >= 'A' && entityName.charAt(i) <= 'Z') {
                 texturePath += "_" + (char) ((int) entityName.charAt(i) + (int) 'a' - (int) 'A');
@@ -142,10 +146,13 @@ public class ChickensRegistryItem {
                 texturePath += entityName.charAt(i);
             }
         }
-        this.registryNameString = texturePath;
+        this.registryName = new ResourceLocation(ChickensMod.MODID, texturePath);
+        this.entityName = texturePath;
     }
 
-    public String getRegistryNameString() { return registryNameString; }
+    public String getTranslationKeyName() {
+        return "entity." + this.translationKeyName + ".name";
+    }
 
     public ItemHolder getDropItemHolder() {
     	return this.dropItem == null ? this.layItem : this.dropItem;

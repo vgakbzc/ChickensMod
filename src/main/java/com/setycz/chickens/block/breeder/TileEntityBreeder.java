@@ -31,19 +31,28 @@ public class TileEntityBreeder extends TileEntity implements ITickable {
         List<ChickensRegistryItem> chickens = getNeighborChickens();
         int size = chickens.size();
         if(size < 2) {
-            return;
-        }
-        int i1 = ChickensMod.RANDOM.nextInt(size);
-        int i2 = ChickensMod.RANDOM.nextInt(size - 1);
-        if(i2 >= i1) {
-            ++i2;
-        }
-        float difficulty = (float) Math.sqrt(chickens.get(i1).getRarity() * chickens.get(i2).getRarity()) * 10f;
-        difficulty /= Math.max(calculateNeighborBonus(), 1.0f);
-        if(ChickensMod.RANDOM.nextInt(65536) * difficulty < Math.ceil(65536)) {
-            Block block = BlockInit.PackedChickens.getBlockByChicken(ChickensRegistry.getRandomChild(chickens.get(i1), chickens.get(i2)));
-            this.getWorld().removeTileEntity(getPos());
-            this.getWorld().setBlockState(getPos(), block.getDefaultState().withProperty(BlockPackedChicken.FACING, getAvailableFacing()));
+            float difficulty = 10.0f;
+            if(this.getWorld().getBlockState(this.getPos().down()).getBlock().equals(Blocks.HAY_BLOCK)
+                    && ChickensMod.RANDOM.nextInt(65536) * difficulty < 65536
+                    && !ChickensRegistry.chickensCatchable.isEmpty()) {
+                int i = ChickensMod.RANDOM.nextInt(ChickensRegistry.chickensCatchable.size());
+                Block block = BlockInit.PackedChickens.getBlockByChicken(ChickensRegistry.chickensCatchable.get(i));
+                this.getWorld().removeTileEntity(getPos());
+                this.getWorld().setBlockState(getPos(), block.getDefaultState().withProperty(BlockPackedChicken.FACING, getAvailableFacing()));
+            }
+        } else {
+            int i1 = ChickensMod.RANDOM.nextInt(size);
+            int i2 = ChickensMod.RANDOM.nextInt(size - 1);
+            if (i2 >= i1) {
+                ++i2;
+            }
+            float difficulty = (float) Math.sqrt(chickens.get(i1).getRarity() * chickens.get(i2).getRarity()) * 10f;
+            difficulty /= Math.max(calculateNeighborBonus(), 1.0f);
+            if (ChickensMod.RANDOM.nextInt(65536) * difficulty < 65536) {
+                Block block = BlockInit.PackedChickens.getBlockByChicken(ChickensRegistry.getRandomChild(chickens.get(i1), chickens.get(i2)));
+                this.getWorld().removeTileEntity(getPos());
+                this.getWorld().setBlockState(getPos(), block.getDefaultState().withProperty(BlockPackedChicken.FACING, getAvailableFacing()));
+            }
         }
     }
 

@@ -25,7 +25,7 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.translation.I18n;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -110,9 +110,11 @@ public class EntityChickensChicken extends EntityChicken {
         if (this.hasCustomName()) {
             return getCustomNameTag();
         }
+        if (I18n.hasKey(this.getChickenDescription().getTranslationKeyName())) {
+            return I18n.format(this.getChickenDescription().getTranslationKeyName());
+        }
 
-        ChickensRegistryItem chickenDescription = getChickenDescription();
-        return I18n.translateToLocal("entity." + chickenDescription.getEntityName() + ".name");
+        return I18n.format("entity.chicken.name", this.getChickenDescription().getLayItemHolder().getStack().getDisplayName());
     }
 
     @Override

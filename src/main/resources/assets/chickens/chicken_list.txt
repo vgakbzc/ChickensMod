@@ -49,3 +49,9 @@ galena_chicken
 pyrite_chicken
 cassiterite_chicken
 chalcopyrite_chicken
+sphalerite_chicken
+garnierite_chicken
+realgar_chicken
+silver_ore_chicken
+quartzite_chicken
+certus_quartz_chicken

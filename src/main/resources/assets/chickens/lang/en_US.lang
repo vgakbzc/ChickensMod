@@ -74,6 +74,7 @@ entity.obsidianChicken.name=Obsidian Chicken
 entity.soulSandChicken.name=Soul Sand Chicken
 entity.StoneChicken.name=Stone Chicken
 entity.PyriteChicken.name=Pyrite Chicken
+entity.chicken.name=%s Chicken
 
 entity.ChickensChicken.tier=Tier: %1$s
 entity.ChickensChicken.layProgress=Next egg in ~%1$smin.
@@ -106,3 +107,5 @@ tile.henhouse_birch.name=Birch Henhouse
 tile.henhouse_dark_oak.name=Dark Oak Henhouse
 tile.henhouse_jungle.name=Jungle Henhouse
 tile.henhouse_spruce.name=Spruce Henhouse
+
+tile.packed.name=Packed %s

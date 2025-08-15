@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.setycz.chickens.ChickensMod;
+import com.setycz.chickens.block.BlockInit;
 import com.setycz.chickens.item.ItemSpawnEgg;
 import com.setycz.chickens.jei.breeding.BreedingRecipeCategory;
 import com.setycz.chickens.jei.breeding.BreedingRecipeHandler;
@@ -32,7 +33,10 @@ import mezz.jei.api.JEIPlugin;
 import mezz.jei.api.ingredients.IModIngredientRegistration;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.FMLLog;
 
 /**
  * Created by setyc on 21.02.2016.
@@ -125,7 +129,7 @@ public class ChickensJeiPlugin implements IModPlugin {
 
             if (!chicken.isBreedable()) { continue; }
 
-            ChickensRegistryItem.BreedHelper parents[] = chicken.getParents().toArray(new ChickensRegistryItem.BreedHelper[0]);
+            List<ChickensRegistryItem.BreedHelper> parents = chicken.getParents();
 
             for(ChickensRegistryItem.BreedHelper breed : parents) {
 
@@ -138,6 +142,26 @@ public class ChickensJeiPlugin implements IModPlugin {
 
                 ItemStack parent2 = new ItemStack(ChickensMod.spawnEgg, 1);
                 ItemSpawnEgg.applyEntityIdToItemStack(parent2, breed.getParent2().getRegistryName());
+
+                //noinspection ConstantConditions
+                result.add(new BreedingRecipeWrapper(
+                        parent1,
+                        parent2,
+                        itemstack,
+                        ChickensRegistry.getChildChance(breed)
+                ));
+
+            }
+
+            for(ChickensRegistryItem.BreedHelper breed : parents) {
+
+                ItemStack itemstack = new ItemStack(BlockInit.PackedChickens.getBlockByChicken(chicken).getCustomItemBlock(), 1);
+
+                ItemStack parent1 = new ItemStack(BlockInit.PackedChickens.getBlockByChicken(breed.getParent1()).getCustomItemBlock(), 1);
+
+                ItemStack parent2 = new ItemStack(BlockInit.PackedChickens.getBlockByChicken(breed.getParent2()).getCustomItemBlock(), 1);
+
+                FMLLog.info(String.format("Chickens Recipe Loader: Loading Breeding Recipe %s + %s -> %s", parent1.getItem().getRegistryName(), parent2.getItem().getRegistryName(), itemstack.getItem().getRegistryName()));
 
                 //noinspection ConstantConditions
                 result.add(new BreedingRecipeWrapper(

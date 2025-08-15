@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
+import com.setycz.chickens.api.IHasCustomItemBlock;
 import com.setycz.chickens.api.recipe.ChickensRecipeMaps;
 import com.setycz.chickens.block.BlockHenhouse;
 import com.setycz.chickens.block.BlockInit;
@@ -229,7 +230,11 @@ public class ChickensMod {
 	}
 	
 	public static void registerItemForBlock(Block block) {
-		itemRegistry.register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
+		if(block instanceof IHasCustomItemBlock) {
+			itemRegistry.register(((IHasCustomItemBlock) block).getCustomItemBlock().setRegistryName(block.getRegistryName()));
+		} else {
+			itemRegistry.register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
+		}
 	}
 
 	private List<String> getChickenNames(Collection<ChickensRegistryItem> chickens) {
@@ -416,14 +421,17 @@ public class ChickensMod {
 	}
 	
 	private List<ChickensRegistryItem> generateDefaultChickens() {
-		List<ChickensRegistryItem> chickens = new ArrayList<ChickensRegistryItem>();
+		List<ChickensRegistryItem> chickens = ChickensRegistry.chickens;
 
-		chickens.add(new ChickensRegistryItem(ChickensRegistry.SMART_CHICKEN_ID, "SmartChicken",
+		ChickensRegistryItem smartChicken = new ChickensRegistryItem(ChickensRegistry.SMART_CHICKEN_ID, "SmartChicken",
 				new ResourceLocation("chickens", "textures/entity/smart_chicken.png"), new ItemStack(Items.EGG),
-				0xffffff, 0xffff00).setSpawnType(SpawnType.NONE));
+				0xffffff, 0xffff00).setSpawnType(SpawnType.NONE);
+		chickens.add(smartChicken);
+		ChickensRegistry.chickensCatchable.add(smartChicken);
 
 		// dye chickens
 		ChickensRegistryItem whiteChicken = createDyeChicken(EnumDyeColor.WHITE, "WhiteChicken")
+				.addParents(smartChicken, smartChicken)
 				.setDropItem(new ItemStack(Items.BONE)).setSpawnType(SpawnType.NORMAL);
 		chickens.add(whiteChicken);
 
@@ -472,6 +480,7 @@ public class ChickensMod {
 //				new ResourceLocation("chickens", "textures/entity/flint_chicken.png"), new ItemStack(Items.FLINT),
 //				0x6b6b47, 0xa3a375);
 		ChickensRegistryItem flintChicken = new ChickensRegistryItemBuilder("FlintChicken")
+			.addParents(smartChicken, smartChicken)
 			.setColor(0x6b6b47, 0xa3a375)
 			.setLayItem(new ItemStack(Items.FLINT))
 			.build();
@@ -482,6 +491,7 @@ public class ChickensMod {
 //				new ResourceLocation("chickens", "textures/entity/log_chicken.png"), new ItemStack(Blocks.LOG),
 //				0x98846d, 0x528358);
 		ChickensRegistryItem logChicken = new ChickensRegistryItemBuilder("LogChicken")
+			.addParents(smartChicken, smartChicken)
 			.setColor(0x98846d, 0x528358)
 			.setLayItem(new ItemStack(Blocks.LOG))
 			.build();
@@ -492,6 +502,7 @@ public class ChickensMod {
 //				new ResourceLocation("chickens", "textures/entity/sand_chicken.png"), new ItemStack(Blocks.SAND),
 //				0xece5b1, 0xa7a06c);
 		ChickensRegistryItem sandChicken = new ChickensRegistryItemBuilder("SandChicken")
+			.addParents(smartChicken, smartChicken)
 			.setColor(0xece5b1, 0xa7a06c)
 			.setLayItem(new ItemStack(Blocks.SAND))
 			.build();
@@ -598,30 +609,30 @@ public class ChickensMod {
 		chickens.add(magmaChicken);
 
 		ChickensRegistryItem pShardChicken = new ChickensRegistryItem(
-				new ResourceLocation(ChickensMod.MODID, "pshardChicken"), "pshardChicken",
+				new ResourceLocation(ChickensMod.MODID, "PshardChicken"), "PshardChicken",
 				new ResourceLocation("chickens", "textures/entity/pshard_chicken.png"),
 				new ItemStack(Items.PRISMARINE_SHARD), 0x43806e, 0x9fcbbc, waterChicken, flintChicken);
 		chickens.add(pShardChicken);
 
 		ChickensRegistryItem pCrystalChicken = new ChickensRegistryItem(
-				new ResourceLocation(ChickensMod.MODID, "pcrystalChicken"), "pcrystalChicken",
+				new ResourceLocation(ChickensMod.MODID, "PcrystalChicken"), "PcrystalChicken",
 				new ResourceLocation("chickens", "textures/entity/pcrystal_chicken.png"),
 				new ItemStack(Items.PRISMARINE_CRYSTALS, 1, 0), 0x4e6961, 0xdfe9dc, pShardChicken, ghastChicken);
 		chickens.add(pCrystalChicken);
 
 		ChickensRegistryItem obsidianChicken = new ChickensRegistryItem(
-				new ResourceLocation(ChickensMod.MODID, "obsidianChicken"), "obsidianChicken",
+				new ResourceLocation(ChickensMod.MODID, "ObsidianChicken"), "ObsidianChicken",
 				new ResourceLocation("chickens", "textures/entity/obsidian_chicken.png"),
 				new ItemStack(Blocks.OBSIDIAN, 1, 0), 0x08080e, 0x463a60, waterChicken, lavaChicken);
 		chickens.add(obsidianChicken);
 
 		ChickensRegistryItem soulsandChicken = new ChickensRegistryItem(
-				new ResourceLocation(ChickensMod.MODID, "soulsandChicken"), "soulsandChicken",
+				new ResourceLocation(ChickensMod.MODID, "SoulsandChicken"), "SoulsandChicken",
 				new ResourceLocation("chickens", "textures/entity/soulsand_chicken.png"),
 				new ItemStack(Blocks.SOUL_SAND, 1, 0), 0x453125, 0xd52f08, sandChicken, netherwartChicken);
 		chickens.add(soulsandChicken);
 
-		ChickensRegistryItem stoneChicken = new ChickensRegistryItemBuilder("stoneChicken")
+		ChickensRegistryItem stoneChicken = new ChickensRegistryItemBuilder("StoneChicken")
 			.addParents(clayChicken, sandChicken, 50)
 			.setLayItem(new ItemStack(Blocks.STONE))
 			.setColor(0xcfcfcf, 0x3c3c3c)
@@ -630,7 +641,7 @@ public class ChickensMod {
 
 		if (Loader.isModLoaded("gregtech")) { // load gregtech version ore chickens
 
-			ChickensRegistryItem pyriteChicken = new ChickensRegistryItemBuilder("pyriteChicken")
+			ChickensRegistryItem pyriteChicken = new ChickensRegistryItemBuilder("PyriteChicken")
 				.addParents(stoneChicken, sandChicken, 20)
 				.setLayItemGTHolder(OrePrefix.ore, Materials.Pyrite)
 				.setColor(0x976e0f, 0xe1b245)
@@ -638,7 +649,7 @@ public class ChickensMod {
 			chickens.add(pyriteChicken);
 			//BlockInit.PackedChickens.add(pyriteChicken);
 
-			ChickensRegistryItem chalcopyriteChicken = new ChickensRegistryItemBuilder("chalcopyriteChicken")
+			ChickensRegistryItem chalcopyriteChicken = new ChickensRegistryItemBuilder("ChalcopyriteChicken")
 				.addParents(netherwartChicken, sandChicken, 20)
 				.setLayItemGTHolder(OrePrefix.ore, Materials.Chalcopyrite)
 				.setColor(0x976e0f, 0xdd660b)
@@ -646,7 +657,7 @@ public class ChickensMod {
 			chickens.add(chalcopyriteChicken);
 			//BlockInit.PackedChickens.add(chalcopyriteChicken);
 
-			ChickensRegistryItem cassiteriteChicken = new ChickensRegistryItemBuilder("cassiteriteChicken")
+			ChickensRegistryItem cassiteriteChicken = new ChickensRegistryItemBuilder("CassiteriteChicken")
 				.addParents(stoneChicken, ghastChicken, 20)
 				.setLayItemGTHolder(OrePrefix.ore, Materials.Cassiterite)
 				.setColor(0xe3e3e3, 0xb4b4b4)
@@ -654,13 +665,97 @@ public class ChickensMod {
 			chickens.add(cassiteriteChicken);
 			//BlockInit.PackedChickens.add(cassiteriteChicken);
 
-			ChickensRegistryItem galenaChicken = new ChickensRegistryItemBuilder("galenaChicken")
+			ChickensRegistryItem galenaChicken = new ChickensRegistryItemBuilder("GalenaChicken")
 				.addParents(stoneChicken, obsidianChicken, 20)
 				.setLayItemGTHolder(OrePrefix.ore, Materials.Galena)
 				.setColor(0xc364a8, 0x8f3174)
 				.build();
 			chickens.add(galenaChicken);
 			//BlockInit.PackedChickens.add(galenaChicken);
+
+			ChickensRegistryItem sphaleriteChicken = new ChickensRegistryItemBuilder("SphaleriteChicken")
+					.addParents(cassiteriteChicken, cassiteriteChicken, 100)
+					.setLayItemGTHolder(OrePrefix.ore, Materials.Sphalerite)
+					.setColor(0xdedcd7, 0xb4b4b4)
+					.build();
+			chickens.add(sphaleriteChicken);
+
+			ChickensRegistryItem garnieriteChicken = new ChickensRegistryItemBuilder("GarnieriteChicken")
+					.addParents(greenChicken, stoneChicken, 30)
+					.setLayItemGTHolder(OrePrefix.ore, Materials.Garnierite)
+					.setColor(0xacff63, 0xcc7236)
+					.build();
+			chickens.add(garnieriteChicken);
+
+			ChickensRegistryItem goldChicken = new ChickensRegistryItemBuilder("GoldChicken")
+					.addParents(pyriteChicken, chalcopyriteChicken, 20)
+					.setLayItemGTHolder(OrePrefix.ore, Materials.Gold)
+					.setColor(0xcccc00, 0xffff80)
+					.build();
+			chickens.add(goldChicken);
+
+			ChickensRegistryItem diamondChicken = new ChickensRegistryItemBuilder("DiamondChicken")
+					.addParents(blueChicken, cassiteriteChicken, 30)
+					.setLayItemGTHolder(OrePrefix.ore, Materials.Diamond)
+					.setColor(0x99ccff, 0xe6f2ff)
+					.build();
+			chickens.add(diamondChicken);
+
+			ChickensRegistryItem emeraldChicken = new ChickensRegistryItemBuilder("EmeraldChicken")
+					.addParents(diamondChicken, greenChicken, 70)
+					.setLayItemGTHolder(OrePrefix.ore, Materials.Emerald)
+					.setColor(0x00cc00, 0x003300)
+					.build();
+			chickens.add(emeraldChicken);
+
+			ChickensRegistryItem coalChicken = new ChickensRegistryItemBuilder("CoalChicken")
+					.addParents(flintChicken, logChicken, 50)
+					.setLayItemGTHolder(OrePrefix.ore, Materials.Coal)
+					.setColor(0x262626, 0x000000)
+					.build();
+			chickens.add(coalChicken);
+
+			ChickensRegistryItem redstoneChicken = new ChickensRegistryItemBuilder("RedstoneChicken")
+					.addParents(redChicken, stoneChicken, 100)
+					.setLayItemGTHolder(OrePrefix.ore, Materials.Redstone)
+					.setColor(0xe60000, 0x800000)
+					.build();
+			chickens.add(redstoneChicken);
+
+			ChickensRegistryItem realgarChicken = new ChickensRegistryItemBuilder("RealgarChicken")
+					.addParents(netherwartChicken, chalcopyriteChicken, 30)
+					.setLayItemGTHolder(OrePrefix.ore, Materials.Realgar)
+					.setColor(0xb03c3c, 0x5c2121)
+					.build();
+			chickens.add(realgarChicken);
+
+			ChickensRegistryItem silverOreChicken = new ChickensRegistryItemBuilder("SilverOreChicken")
+					.addParents(sphaleriteChicken, sphaleriteChicken, 20)
+					.setColor(0xaaaaaa, 0xcccccc)
+					.setLayItemGTHolder(OrePrefix.ore, Materials.Silver)
+					.build();
+			chickens.add(silverOreChicken);
+
+			ChickensRegistryItem quartzChicken = new ChickensRegistryItemBuilder("QuartzChicken")
+					.addParents(glassChicken, gunpowderChicken, 40)
+					.setColor(0x4d0000, 0x1a0000)
+					.setLayItemGTHolder(OrePrefix.ore, Materials.NetherQuartz)
+					.build();
+			chickens.add(quartzChicken);
+
+			ChickensRegistryItem quartziteChicken = new ChickensRegistryItemBuilder("QuartziteChicken")
+					.addParents(glassChicken, gunpowderChicken, 40)
+					.setColor(0x84946a, 0x1a0000)
+					.setLayItemGTHolder(OrePrefix.ore, Materials.Quartzite)
+					.build();
+			chickens.add(quartziteChicken);
+
+			ChickensRegistryItem certusQuartzChicken = new ChickensRegistryItemBuilder("CertusQuartzChicken")
+					.addParents(glassChicken, gunpowderChicken, 40)
+					.setColor(0x6a7d94, 0x1a0000)
+					.setLayItemGTHolder(OrePrefix.ore, Materials.CertusQuartz)
+					.build();
+			chickens.add(certusQuartzChicken);
 
 		} else { // load default ore chickens
 

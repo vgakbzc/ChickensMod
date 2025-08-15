@@ -1,6 +1,9 @@
 package com.setycz.chickens.block.packed_chicken;
 
 import com.setycz.chickens.ChickensMod;
+import com.setycz.chickens.api.IHasCustomItemBlock;
+import com.setycz.chickens.entity.EntityChickensChicken;
+import com.setycz.chickens.item.ItemSpawnEgg;
 import com.setycz.chickens.registry.ChickensRegistryItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -8,7 +11,9 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -24,17 +29,36 @@ import net.minecraftforge.client.model.ModelLoader;
 
 import java.util.Random;
 
-public class BlockPackedChicken extends BlockContainer {
+public class BlockPackedChicken extends BlockContainer implements IHasCustomItemBlock {
 
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 
     private final ChickensRegistryItem chicken;
+    private ItemBlockPackedChicken itemBlock = null;
+
+    public ItemBlock getCustomItemBlock() {
+        if(itemBlock == null) {
+            itemBlock = new ItemBlockPackedChicken(this);
+        }
+        return itemBlock;
+    }
+
+    @Override
+    public String getLocalizedName() {
+        String chickenName = "";
+        if(I18n.hasKey(this.getChicken().getTranslationKeyName())){
+            chickenName = I18n.format(this.getChicken().getTranslationKeyName());
+        } else {
+            chickenName = I18n.format("entity.chicken.name", this.getChicken().getLayItemHolder().getStack().getDisplayName());
+        }
+        return I18n.format("tile.packed.name", chickenName);
+    }
 
     public BlockPackedChicken(ChickensRegistryItem chicken) {
         super(Material.WOOD);
         this.chicken = chicken;
-        setUnlocalizedName("packed." + chicken.getRegistryNameString());
-        setRegistryName("packed_" + chicken.getRegistryNameString());
+        setUnlocalizedName("packed." + chicken.getEntityName());
+        setRegistryName("packed_" + chicken.getEntityName());
         setHardness(1.0F);
         setResistance(1F);
 
